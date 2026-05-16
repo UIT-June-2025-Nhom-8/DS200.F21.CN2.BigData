@@ -1,0 +1,19 @@
+.secrets/
+**/kaggle.json
+
+# Dataset — quá nặng, mỗi thành viên tự tải bằng notebooks/download_datasets.ipynb
+data/raw/
+data/splits/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pth
+*.ckpt
+
+
+# Môi trường
+.env
+*.egg-info/
+dist/
+
