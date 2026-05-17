@@ -1,5 +1,5 @@
 ---
-applyTo: 'src/**/*.py,scripts/**/*.py,notebooks/**/*.py'
+applyTo: 'src/**/*.py,scripts/**/*.py,notebooks/**/*.py,notebooks/**/*.ipynb'
 ---
 
 # Code Style — DS200 AI Face Detection Project

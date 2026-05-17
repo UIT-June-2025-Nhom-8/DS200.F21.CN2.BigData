@@ -50,7 +50,7 @@ Before generating any table or chart, search `reports/` and `artifacts/` for the
 % Required: \usepackage{booktabs,multirow,siunitx}
 \begin{table}[t]
   \centering
-  \caption{Performance on the held-out test set.}
+  \caption{Kết quả đánh giá trên tập kiểm tra.}
   \label{tab:main_results}
   \begin{tabular}{lSSSSS}
     \toprule
@@ -77,7 +77,7 @@ Before generating any table or chart, search `reports/` and `artifacts/` for the
   ]
     % nodes and \draw[arrow] edges here
   \end{tikzpicture}
-  \caption{EfficientNet-B0 classifier architecture.}
+  \caption{Kiến trúc mô hình phân loại EfficientNet-B0.}
   \label{fig:architecture}
 \end{figure}
 ```
@@ -101,7 +101,7 @@ For the 3-stage diagram: color frozen layers `fill=gray!20`, trainable layers `f
       \addplot[red,dashed,thick] coordinates { }; \addlegendentry{Val}
     \end{axis}
   \end{tikzpicture}
-  \caption{Training and validation loss (Stage 1).}
+  \caption{Loss huấn luyện và kiểm định (Stage 1).}
   \label{fig:loss_stage1}
 \end{figure}
 ```
@@ -111,7 +111,7 @@ For the 3-stage diagram: color frozen layers `fill=gray!20`, trainable layers `f
 ```latex
 % Required: \usepackage[ruled,vlined]{algorithm2e}
 \begin{algorithm}[t]
-\caption{3-Stage Fine-Tuning of EfficientNet-B0}
+\caption{Quy trình huấn luyện 3 giai đoạn EfficientNet-B0}
 \label{alg:training}
 \KwIn{Pre-trained EfficientNet-B0 $f_\theta$, datasets $\mathcal{D}$}
 \KwOut{Best checkpoint $\theta^*$}
@@ -150,6 +150,7 @@ For the 3-stage diagram: color frozen layers `fill=gray!20`, trainable layers `f
 #### Full IEEE Document Shell
 
 ```latex
+% Required: IEEEtran class — install via TeX Live: tlmgr install ieeetran
 \documentclass[conference]{IEEEtran}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs,multirow,siunitx,graphicx,subcaption}
@@ -186,91 +187,3 @@ Always respond with:
 2. Compile instruction (`pdflatex` or `xelatex`)
 3. Save path under `reports/latex/`
 4. What to customize (placeholder values, figure paths, actual data coordinates)
-
-## When to Use
-
-- Proofreading any section of the report for grammar and spelling
-- Improving clarity, concision, or academic register
-- Reviewing section structure for scope violations
-- Drafting polite, structured responses to reviewer comments
-- Refining the contribution statement
-
-## Procedure
-
-### 1. Read Context First
-
-Always read the full section (not just the highlighted paragraph) before suggesting edits, to preserve coherence and avoid introducing contradictions.
-
-### 2. Apply the Right Editing Mode
-
-**Proofreading** — Fix grammar, spelling, punctuation, subject-verb agreement. Flag (do not auto-fix) sentences where intent is ambiguous.
-
-**Clarity & Concision:**
-
-- "In this paper, we propose..." → "We propose..."
-- Prefer active voice (passive only where field convention demands it)
-- Split sentences >35 words into two
-- Replace vague quantifiers ("many", "several") with specific numbers from the data
-
-**Academic Register — common upgrades:**
-
-| Informal                        | Academic                                            |
-| ------------------------------- | --------------------------------------------------- |
-| "We used a big dataset"         | "We curated a large-scale dataset comprising..."    |
-| "The model works well"          | "The model achieves competitive performance on..."  |
-| "We tried different settings"   | "We conducted a systematic ablation study..."       |
-| "As we can see from the figure" | "As illustrated in Figure X,..."                    |
-| "Our method is better"          | "Our approach outperforms the baseline by X% on..." |
-
-**Structural Review — per section:**
-
-- Abstract: problem → method → results → conclusion. ≤250 words.
-- Introduction: hook → gap → contributions. No results.
-- Related Work: theme-grouped paragraphs, each ending with differentiation statement.
-- Methodology: no results; past tense for experiments, present for model description.
-- Experiments: every table has a caption + pointer sentence in text; every figure cited.
-- Discussion: limitations must be stated explicitly, not hidden.
-- Conclusion: no new information.
-
-**Contribution Statement** — must be parallel and specific:
-
-```
-We make the following contributions:
-(i) We propose/present [X], which [does Y].
-(ii) We conduct [Z] to demonstrate [outcome].
-(iii) We release [artifact] to support [goal].
-```
-
-**Reviewer Response** — structured format:
-
-```
-**Reviewer Comment:** [quote]
-
-**Response:** We thank the reviewer for this observation.
-[Acknowledge] → [Explain action taken or justify original] → [Pointer: "See Section X, paragraph Y."]
-```
-
-### 3. Show a Diff
-
-For every substantive rewrite, present before/after side-by-side and briefly explain why the new version is stronger.
-
-### 4. Output Format
-
-```
-### [Section Name] — Edit Pass
-
-**Issues found:** [bullets]
-
-**Revised text:**
-> [new version]
-
-**Changes explained:**
-- [Change]: [reason]
-```
-
-## Constraints
-
-- Never add citations not in the project's reference list
-- Never invent claims, results, or numbers
-- Work one section per invocation unless a full pass is explicitly requested
-- Only edit files under `reports/`

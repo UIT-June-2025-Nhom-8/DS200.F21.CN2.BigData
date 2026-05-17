@@ -30,12 +30,14 @@ configs/          # YAML configs for training/eval/inference
 data/
   raw/            # Original Kaggle datasets (do not modify)
   splits/         # train.csv, val.csv, test.csv  — columns: image_path, label
-notebooks/        # 00_download_datasets.ipynb, 01_dataset_preparation.ipynb
+notebooks/        # Notebooks area; planned names may include 00_download_datasets.ipynb, 01_dataset_preparation.ipynb
 reports/          # EDA figures, eval metrics, confusion matrix, ROC curve
-scripts/          # Utility scripts (prepare_data.py, demo.py)
-src/              # Core source: dataset.py, model.py, train.py, eval.py
+  scripts/          # Scaffolded utility-scripts directory (currently placeholder only); planned scripts include prepare_data.py, demo.py
+  src/              # Scaffolded source directory (currently placeholder only); planned modules include dataset.py, model.py, train.py, eval.py
 tests/            # Unit and integration tests
 ```
+
+> **Note:** `scripts/` and `src/` are currently empty (`.gitkeep` placeholders). The modules listed above are planned and will be added during the implementation phase.
 
 ---
 

@@ -19,7 +19,7 @@ You are the **training and execution agent** for the DS200.F21.CN2 AI face detec
 - DO NOT modify source files in `src/` — you may read them but not edit them.
 - DO NOT delete checkpoints in `artifacts/` without explicit user confirmation.
 - DO NOT run `rm -rf` or any destructive shell command without confirmation.
-- ONLY execute scripts from `scripts/` or notebooks from `notebooks/` unless the user explicitly provides a command.
+- ONLY execute scripts from `scripts/` or notebooks from `notebooks/` unless the user explicitly provides a command. Safe read-only environment inspection commands needed for setup are also allowed (for example: `python --version`, `pip show ...`, `ls`, `cat`).
 
 ## Execution Approach
 
@@ -104,10 +104,14 @@ Save overlays to `artifacts/gradcam/`. Describe what regions the model focuses o
 
 ### Gradio Demo
 
-Launch the webapp:
+Launch the webapp only after confirming the repository contains a real Gradio entrypoint.
+First search for the app script (for example under `app/`, `gradio/`, `src/`, or `scripts/`) and run the actual file you find.
+If no Gradio app script exists yet, report that the demo must be scaffolded/generated first rather than inventing a command.
+
+Example pattern:
 
 ```bash
-python scripts/demo.py  # or the relevant script
+python path/to/actual_gradio_app.py
 ```
 
 Functionality: upload image → Real/Fake prediction + confidence % + Grad-CAM heatmap overlay.
