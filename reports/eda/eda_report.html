@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DS200 — Báo Cáo EDA</title>
+  <style>
+    :root {
+      --real:  #2ecc71;
+      --fake:  #e74c3c;
+      --accent:#3498db;
+      --bg:    #0f1117;
+      --card:  #1a1d27;
+      --border:#2a2d3e;
+      --text:  #e0e4ef;
+      --muted: #8b8fa8;
+      --tag-real: rgba(46,204,113,.15);
+      --tag-fake: rgba(231,76,60,.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ───────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #1a1d27 0%, #0f1117 60%, #12151f 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    header .badge {
+      display: inline-block;
+      background: rgba(52,152,219,.15);
+      border: 1px solid rgba(52,152,219,.35);
+      color: var(--accent);
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .25rem .75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: .5rem;
+    }
+    header p.subtitle {
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    /* ── NAV ──────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,17,23,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: .6rem 2rem;
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      white-space: nowrap;
+      transition: color .2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* ── LAYOUT ───────────────────────────────────────── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* ── STAT BAR ─────────────────────────────────────── */
+    .stat-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+    }
+    .stat-card .label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .stat-card .value { font-size: 1.6rem; font-weight: 700; margin-top: .2rem; }
+    .stat-card.real .value { color: var(--real); }
+    .stat-card.fake .value { color: var(--fake); }
+    .stat-card.total .value { color: var(--accent); }
+    .stat-card.dedup .value { color: #f39c12; }
+
+    /* ── SECTION ──────────────────────────────────────── */
+    section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .section-num {
+      background: rgba(52,152,219,.2);
+      color: var(--accent);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      padding: .2rem .6rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* ── CARD ─────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    /* ── IMAGE GRID ───────────────────────────────────── */
+    .img-grid {
+      display: grid;
+      gap: 1px;
+      background: var(--border);
+    }
+    .img-grid.cols-1 { grid-template-columns: 1fr; }
+    .img-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .img-cell {
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+    }
+    .img-cell img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .img-caption {
+      padding: .5rem .75rem;
+      font-size: .75rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── INSIGHT GRID ─────────────────────────────────── */
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: .75rem;
+      padding: 1rem;
+    }
+    .insight {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .8rem 1rem;
+      font-size: .85rem;
+    }
+    .insight .i-label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: .35rem;
+    }
+    .insight.green .i-label { color: var(--real); }
+    .insight.red .i-label   { color: var(--fake); }
+    .insight.blue .i-label  { color: var(--accent); }
+    .insight.yellow .i-label{ color: #f39c12; }
+
+    /* ── ACTION TABLE ─────────────────────────────────── */
+    .action-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+    }
+    .action-table th {
+      text-align: left;
+      padding: .6rem 1rem;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .action-table td {
+      padding: .65rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      vertical-align: top;
+    }
+    .action-table tr:last-child td { border-bottom: none; }
+    .action-table code {
+      background: rgba(52,152,219,.12);
+      color: var(--accent);
+      padding: .1rem .4rem;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: .8rem;
+    }
+    .pill {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .pill.real { background: var(--tag-real); color: var(--real); }
+    .pill.fake { background: var(--tag-fake); color: var(--fake); }
+
+    /* ── SECTION PURPOSE ──────────────────────────────── */
+    .section-purpose {
+      font-size: .85rem;
+      color: var(--muted);
+      border-left: 3px solid var(--border);
+      padding-left: .75rem;
+      margin-top: -.25rem;
+    }
+    .section-purpose strong { color: var(--text); }
+    .section-purpose code {
+      background: rgba(52,152,219,.12);
+      color: var(--accent);
+      padding: .1rem .4rem;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: .8rem;
+    }
+
+    /* ── GLOSSARY ────────────────────────────────────── */
+    .glossary {
+      background: rgba(52,152,219,.05);
+      border: 1px solid rgba(52,152,219,.2);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+    }
+    .glossary-title {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: .75rem;
+    }
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: .6rem .75rem;
+    }
+    .glossary-item {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .glossary-item .gterm {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── SECTION DIVIDER ──────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── FFT SECTION ──────────────────────────────────── */
+    .fft-note {
+      padding: 1rem 1.25rem;
+      background: rgba(52,152,219,.07);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: .85rem;
+      color: var(--muted);
+      margin: 0 1rem 1rem;
+    }
+
+    /* ── INTEGRITY CHECKS ─────────────────────────────── */
+    .check-list {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      padding: 1rem 1.25rem;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: .88rem;
+    }
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .check-icon.pass { background: var(--tag-real); color: var(--real); }
+    .check-icon.fail { background: var(--tag-fake); color: var(--fake); }
+
+    /* ── SUMMARY TABLE ────────────────────────────────── */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .86rem;
+    }
+    .summary-table th {
+      text-align: right;
+      padding: .6rem 1rem;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-table th:first-child { text-align: left; }
+    .summary-table td {
+      padding: .65rem 1rem;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .summary-table td:first-child { text-align: left; font-weight: 500; }
+    .summary-table tr:last-child td {
+      border-bottom: none;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .summary-table .n-real { color: var(--real); }
+    .summary-table .n-fake { color: var(--fake); }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: .8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      .img-grid.cols-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────── -->
+<header>
+  <div class="badge">DS200.F21.CN2 · UIT-VNU HCM</div>
+  <h1>Báo Cáo Phân Tích Khám Phá Dữ Liệu (EDA)</h1>
+  <p class="subtitle">Phát Hiện Khuôn Mặt Tạo Bởi AI &nbsp;·&nbsp; 17/05/2026 &nbsp;·&nbsp; notebooks/02_eda.ipynb</p>
+</header>
+
+<!-- ── NAV ────────────────────────────────────────────── -->
+<nav>
+  <a href="#overview">Tổng quan</a>
+  <a href="#s1">1 · Phân bố lớp</a>
+  <a href="#s2">2 · Độ phân giải</a>
+  <a href="#s3">3 · Ảnh mẫu</a>
+  <a href="#s4">4 · Pixel stats</a>
+  <a href="#s5">5 · FFT</a>
+  <a href="#s6">6 · Toàn vẹn</a>
+  <a href="#s7">7 · Duplicate</a>
+  <a href="#s8">8 · Tổng hợp</a>
+  <a href="#decisions">Quyết định</a>
+</nav>
+
+<main>
+
+  <!-- ── OVERVIEW STATS ───────────────────────────────── -->
+  <section id="overview">
+    <div class="section-header">
+      <span class="section-num">Tổng quan</span>
+      <h2>Thống Kê Nhanh</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Cung cấp cái nhìn tổng thể về quy mô tập dữ liệu — số lượng ảnh, tỷ lệ nhãn, số nguồn và cách phân chia — trước khi đi vào phân tích chi tiết từng khía cạnh.</p>
+    <div class="stat-bar">
+      <div class="stat-card total">
+        <div class="label">Tổng ảnh (sau dedup)</div>
+        <div class="value">316,530</div>
+      </div>
+      <div class="stat-card real">
+        <div class="label">Ảnh Thật</div>
+        <div class="value">149,741</div>
+      </div>
+      <div class="stat-card fake">
+        <div class="label">Ảnh Giả</div>
+        <div class="value">166,789</div>
+      </div>
+      <div class="stat-card dedup">
+        <div class="label">Ảnh trùng đã loại</div>
+        <div class="value">17,135</div>
+      </div>
+      <div class="stat-card total">
+        <div class="label">Nguồn dữ liệu</div>
+        <div class="value">4</div>
+      </div>
+      <div class="stat-card total">
+        <div class="label">Split train / val / test</div>
+        <div class="value" style="font-size:1.1rem;padding-top:.35rem">70 / 15 / 15</div>
+      </div>
+    </div>
+    <div class="glossary">
+      <div class="glossary-title">📖 Giải thích nhanh — đọc trước khi xem báo cáo</div>
+      <div class="glossary-grid">
+        <div class="glossary-item"><span class="gterm">Ảnh Giả (Fake / AI-generated)</span> — Khuôn mặt hoàn toàn do máy tính tạo ra, người trong ảnh không có thật. Trông rất giống người thật nhưng là sản phẩm của AI.</div>
+        <div class="glossary-item"><span class="gterm">GAN</span> — Loại AI chuyên tạo ảnh giả. StyleGAN2 và Deepfake là hai dạng phổ biến: StyleGAN2 tạo ra khuôn mặt hoàn toàn mới, Deepfake ghép mặt người thật lên video.</div>
+        <div class="glossary-item"><span class="gterm">Artifact</span> — Lỗi thị giác nhỏ để lộ ảnh là giả: vùng tai bị nhòe, nền ảnh loang lổ, đường viền khuôn mặt trông không tự nhiên. Thường rất khó thấy bằng mắt thường.</div>
+        <div class="glossary-item"><span class="gterm">FFT (Phân tích phổ tần số)</span> — Kỹ thuật phân tách ảnh thành các "lớp chi tiết" từ thô đến mịn. Ảnh thật và giả để lại dấu vết khác nhau ở lớp chi tiết siêu nhỏ mà mắt người không thấy nhưng máy tính có thể học.</div>
+        <div class="glossary-item"><span class="gterm">EDA (Phân tích khám phá dữ liệu)</span> — Bước "nhìn kỹ" dữ liệu trước khi dạy AI, để phát hiện vấn đề và lên kế hoạch xử lý. Giống như đọc kỹ nguyên liệu trước khi nấu.</div>
+        <div class="glossary-item"><span class="gterm">Dedup / MD5</span> — Loại bỏ ảnh trùng lặp. MD5 là "mã vân tay" của file — hai file giống nhau hoàn toàn sẽ có cùng mã. Giống như không cho phép nộp cùng một bài thi hai lần vào hai tập khác nhau.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 1 ─────────────────────────────────────── -->
+  <section id="s1">
+    <div class="section-header">
+      <span class="section-num">Phần 1</span>
+      <h2>Phân Bố Lớp Theo Nguồn Dữ Liệu</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Kiểm tra xem số lượng ảnh Thật và Giả trong từng nguồn có gần bằng nhau không — nếu quá lệch, mô hình AI sẽ bị "thiên vị" và nhận diện kém. Cũng kiểm tra xem một nguồn có chiếm quá nhiều không, để tránh mô hình chỉ học được một phong cách ảnh duy nhất.</p>
+
+    <div class="card">
+      <div class="img-grid cols-2">
+        <div class="img-cell">
+          <img src="assets/eda_class_distribution.png" alt="Phân bố Thật/Giả theo nguồn — số lượng và tỷ lệ" />
+          <div class="img-caption">Số lượng &amp; tỷ lệ Thật / Giả theo từng nguồn</div>
+        </div>
+        <div class="img-cell">
+          <img src="assets/eda_per_source_distribution.png" alt="Phân bố tổng thể theo nguồn" />
+          <div class="img-caption">Phân bố tổng thể theo nguồn dữ liệu</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight green">
+        <div class="i-label">140k-StyleGAN</div>
+        70,000 Thật + 70,000 Giả — cân bằng hoàn hảo, chiếm ~44% tập tổng.
+      </div>
+      <div class="insight blue">
+        <div class="i-label">Deepfake-Real</div>
+        95,201 Thật / 95,134 Giả sau dedup — gần cân bằng, ảnh 256×256.
+      </div>
+      <div class="insight yellow">
+        <div class="i-label">Hard-FakeReal</div>
+        589 Thật / 700 Giả — tập nhỏ (~0.4%), thiết kế để khó phân biệt.
+      </div>
+      <div class="insight yellow">
+        <div class="i-label">ciplab</div>
+        1,081 Thật / 960 Giả — tập nhỏ (~0.6%), tổng hợp từ nhiều GAN method.
+      </div>
+    </div>
+
+    <div class="card">
+      <table class="action-table">
+        <thead><tr><th>Phát hiện</th><th>Hành động kỹ thuật</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Tổng Thật/Giả lệch ~10% (149k vs 167k)</td>
+            <td>Cân nhắc <code>pos_weight = n_fake / n_real ≈ 1.11</code> trong <code>BCEWithLogitsLoss</code></td>
+          </tr>
+          <tr>
+            <td>140k-StyleGAN chiếm đa số (~88%)</td>
+            <td>Stratified sampling theo nguồn trong DataLoader để tránh overfit StyleGAN</td>
+          </tr>
+          <tr>
+            <td>ciplab / Hard-FakeReal rất nhỏ</td>
+            <td>Augmentation mạnh hơn cho hai nguồn này; đảm bảo có trong test set</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 2 ─────────────────────────────────────── -->
+  <section id="s2">
+    <div class="section-header">
+      <span class="section-num">Phần 2</span>
+      <h2>Chất Lượng Ảnh: Độ Phân Giải &amp; Tỷ Lệ Khung Hình</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Xác định kích thước ảnh gốc từ tất cả các nguồn — mô hình AI cần ảnh đầu vào đúng 224×224 pixel. Bước này kiểm tra cách thu nhỏ ảnh hợp lý nhất để không làm méo hoặc cắt mất khuôn mặt trong quá trình chuẩn bị dữ liệu.</p>
+
+    <div class="card">
+      <div class="img-grid cols-2">
+        <div class="img-cell">
+          <img src="assets/eda_resolution.png" alt="Histogram phân bố độ phân giải" />
+          <div class="img-caption">Phân bố độ phân giải ảnh thô (histogram)</div>
+        </div>
+        <div class="img-cell">
+          <img src="assets/eda_resolution_scatter.png" alt="Scatter width vs height" />
+          <div class="img-caption">Scatter width × height với tham chiếu 224×224</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight green">
+        <div class="i-label">140k-StyleGAN</div>
+        Đã ở 224×224 — phù hợp trực tiếp với đầu vào EfficientNet-B0, không resize.
+      </div>
+      <div class="insight blue">
+        <div class="i-label">Deepfake-Real</div>
+        Gốc 256×256, resize về 224×224 mất tối thiểu thông tin (~12% crop).
+      </div>
+      <div class="insight yellow">
+        <div class="i-label">Hard-FakeReal &amp; ciplab</div>
+        Phân bố phân giải đa dạng hơn, nhưng hầu hết tỷ lệ ≈ 1:1 (vuông).
+      </div>
+      <div class="insight green">
+        <div class="i-label">Kết luận resize</div>
+        <code>albumentations.Resize(224, 224)</code> đủ dùng — không cần padding hay LongestMaxSize.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 3 ─────────────────────────────────────── -->
+  <section id="s3">
+    <div class="section-header">
+      <span class="section-num">Phần 3</span>
+      <h2>Lưới Ảnh Mẫu: Thật vs Giả Theo Từng Nguồn</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Nhìn trực tiếp vào sự khác biệt giữa ảnh Thật và Giả từng nguồn — để xác nhận rằng sự khác biệt là có thật và có thể phát hiện được, đồng thời nhận ra những chi tiết nào thường "tố cáo" ảnh giả (vùng tai, đường viền mặt, nền ảnh).</p>
+
+    <div class="card">
+      <div class="img-grid cols-1">
+        <div class="img-cell">
+          <img src="assets/eda_sample_grid.png" alt="Lưới ảnh mẫu 8×4 — Thật vs Giả theo nguồn" />
+          <div class="img-caption">
+            Lưới 8 cột × 4 hàng — <span class="pill real">Xanh lá = Thật</span>&nbsp;<span class="pill fake">Đỏ = Giả</span> — 4 ảnh mỗi lớp mỗi nguồn
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight red">
+        <div class="i-label">140k-StyleGAN</div>
+        Ảnh giả (StyleGAN2) rất thuyết phục — artifact chỉ lộ ở vùng tai, hoa tai, nền ảnh.
+      </div>
+      <div class="insight blue">
+        <div class="i-label">Deepfake-Real</div>
+        Khuôn mặt ghép/biến đổi — vùng biên khuôn mặt không tự nhiên, dễ nhận ra hơn StyleGAN.
+      </div>
+      <div class="insight yellow">
+        <div class="i-label">Hard-FakeReal</div>
+        Thiết kế để khó phân biệt — độ tương phản cao, đa dạng sắc tộc.
+      </div>
+      <div class="insight yellow">
+        <div class="i-label">ciplab</div>
+        Tổng hợp từ nhiều phương pháp GAN — chất lượng biến thiên.
+      </div>
+      <div class="insight green">
+        <div class="i-label">Hàm ý mô hình</div>
+        Cần học <strong>đặc trưng tần số cao</strong> (artifact), không chỉ màu sắc/hình dạng tổng quát → phù hợp EfficientNet.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 4 ─────────────────────────────────────── -->
+  <section id="s4">
+    <div class="section-header">
+      <span class="section-num">Phần 4</span>
+      <h2>Thống Kê Cường Độ Pixel R/G/B Theo Nguồn</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Kiểm tra xem màu sắc và độ sáng trung bình của ảnh từ các nguồn khác nhau có tương đồng nhau không — nếu một nguồn có ảnh quá tối hay quá sáng bất thường, cần xử lý trước để tránh mô hình bị nhầm lẫn do chênh lệch ánh sáng thay vì nhận ra ảnh giả thật sự.</p>
+
+    <div class="card">
+      <div class="img-grid cols-2">
+        <div class="img-cell">
+          <img src="assets/eda_pixel_stats.png" alt="Box plot cường độ pixel theo nguồn" />
+          <div class="img-caption">Box plot trung bình pixel R/G/B theo nguồn (sample 3,000/nguồn)</div>
+        </div>
+        <div class="img-cell">
+          <img src="assets/eda_intensity_per_source.png" alt="Histogram cường độ pixel per-source" />
+          <div class="img-caption">Histogram cường độ pixel theo từng nguồn</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight green">
+        <div class="i-label">Không domain shift</div>
+        Phân bố pixel tương đối đồng nhất giữa các nguồn — không có lệch màu sắc cực đoan.
+      </div>
+      <div class="insight blue">
+        <div class="i-label">Kênh R &gt; kênh B</div>
+        Phù hợp với ảnh khuôn mặt người (tông da có nhiều đỏ hơn xanh).
+      </div>
+      <div class="insight green">
+        <div class="i-label">ImageNet normalization phù hợp</div>
+        <code>mean=[0.485, 0.456, 0.406]</code>, <code>std=[0.229, 0.224, 0.225]</code> — không cần histogram equalization hay CLAHE.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 5 ─────────────────────────────────────── -->
+  <section id="s5">
+    <div class="section-header">
+      <span class="section-num">Phần 5</span>
+      <h2>Phân Tích Phổ Tần Số (FFT): Thật vs Giả</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Tìm "dấu vân tay kỹ thuật số" ẩn mà mắt thường không thấy nhưng máy tính có thể học — ảnh do AI tạo ra thường để lại các rung động bất thường ở mức chi tiết siêu nhỏ. Phát hiện này giúp quyết định cách huấn luyện mô hình tốt hơn, kể cả khi ảnh bị nén hay giảm chất lượng.</p>
+
+    <div class="card">
+      <div class="img-grid cols-1">
+        <div class="img-cell">
+          <img src="assets/eda_fft.png" alt="Phổ FFT trung bình Thật vs Giả và hiệu phổ" />
+          <div class="img-caption">Phổ FFT log-scale trung bình — Thật (trái) · Giả (giữa) · Hiệu Thật−Giả (phải)</div>
+        </div>
+      </div>
+      <div class="fft-note">
+        <strong>💡 Hình dung đơn giản:</strong> Nhạc cụ trong bản nhạc có loại trầm (trống, bass) và loại cao (sáo, violin). FFT làm điều tương tự với ảnh — phân tách thành "nhạc cụ thô" (hình dạng mặt, nền) và "nhạc cụ mịn" (lông mi, sợi tóc, chi tiết nhỏ). Ảnh thật có "bản nhạc" tự nhiên, ảnh do AI tạo thường có "nốt sai" ở phần nhạc cụ mịn mà mắt người không thấy nhưng máy tính có thể phát hiện.<br><br>
+        <strong>Cách đọc hình:</strong> Trung tâm = tần số thấp (hình dạng tổng quát). Vùng ngoài = tần số cao (chi tiết, dấu hiệu giả). Vùng sáng trong hình "Hiệu" = nơi ảnh Thật và Giả khác nhau nhiều nhất.
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight green">
+        <div class="i-label">Phổ Thật</div>
+        Năng lượng tập trung ở tần số thấp (trung tâm), suy giảm tự nhiên ra ngoài — đặc trưng ảnh chụp thực.
+      </div>
+      <div class="insight red">
+        <div class="i-label">Phổ Giả</div>
+        Có "năng lượng thừa" ở mức chi tiết siêu nhỏ — dư âm của quá trình AI tạo ảnh, giống như bản in bị rỗ mực rất nhỏ mà mắt bình thường không nhận ra.
+      </div>
+      <div class="insight blue">
+        <div class="i-label">Hiệu phổ (Thật − Giả)</div>
+        Ảnh giả thiếu đi sự mịn màng tự nhiên ở mức chi tiết vừa — thay vào đó có nhiễu lộn xộn ở mức cực nhỏ. Đây chính là "dấu vân tay" để mô hình học nhận diện.
+      </div>
+      <div class="insight green">
+        <div class="i-label">Hàm ý augmentation</div>
+        Thêm bước nén ảnh nhẹ khi huấn luyện — giúp mô hình vẫn nhận diện tốt kể cả khi ảnh bị giảm chất lượng (gửi qua mạng xã hội, chụp màn hình, v.v.).
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 6 ─────────────────────────────────────── -->
+  <section id="s6">
+    <div class="section-header">
+      <span class="section-num">Phần 6</span>
+      <h2>Tính Toàn Vẹn: Kiểm Tra Chồng Lấp Train / Val / Test</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Đảm bảo quá trình chia dữ liệu không bị "gian lận" — nếu ảnh dùng để dạy AI cũng xuất hiện trong bộ bài kiểm tra, điểm số sẽ cao giả tạo. Bước này xác nhận kết quả cuối cùng thực sự đo lường khả năng của mô hình với ảnh chưa từng thấy.</p>
+
+    <div class="card">
+      <div class="check-list">
+        <div class="check-item">
+          <div class="check-icon pass">✓</div>
+          <span><strong>Train ∩ Val</strong> — Không trùng lặp. Pipeline split hợp lệ.</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon pass">✓</div>
+          <span><strong>Train ∩ Test</strong> — Không trùng lặp. Không có data leakage vào test set.</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon pass">✓</div>
+          <span><strong>Val ∩ Test</strong> — Không trùng lặp. Ba tập hoàn toàn độc lập.</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon pass">✓</div>
+          <span><strong>Stratified split</strong> — Tỷ lệ nhãn Thật/Giả xấp xỉ nhau trong cả 3 tập (70/15/15 phân tầng theo label).</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon pass">✓</div>
+          <span><strong>MD5 dedup</strong> — 17,135 ảnh trùng đã loại trước khi split, không ảnh nào xuất hiện hai lần.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight green">
+        <div class="i-label">Kết luận</div>
+        Kết quả đánh giá trên test set là đáng tin cậy — không bị rò rỉ từ train. Số liệu metrics cuối là chính xác.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 7 ─────────────────────────────────────── -->
+  <section id="s7">
+    <div class="section-header">
+      <span class="section-num">Phần 7</span>
+      <h2>MD5 Duplicate Viewer</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Tìm và xóa các ảnh xuất hiện nhiều lần trong tổng dữ liệu — nếu cùng một ảnh được dạy nhiều lần, mô hình có thể "học thuộc lòng" thay vì thực sự học cách nhận diện. Bước này cũng ngăn ảnh huấn luyện vô tình lẫn vào bộ kiểm tra.</p>
+
+    <div class="card">
+      <div class="img-grid cols-1">
+        <div class="img-cell">
+          <img src="assets/eda_duplicate_viewer.png" alt="MD5 duplicate viewer — các nhóm ảnh trùng lặp"
+               onerror="this.parentElement.innerHTML='<div style=\'padding:2rem;text-align:center;color:var(--muted);font-size:.9rem\'>Không phát hiện ảnh trùng lặp — hình ảnh không được tạo ra.</div>'" />
+          <div class="img-caption">Lưới ảnh các nhóm trùng lặp (tối đa 6 nhóm × 3 ảnh)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight blue">
+        <div class="i-label">17,135 ảnh trùng đã loại</div>
+        Notebook <code>01_dataset_preparation.ipynb</code> thực hiện MD5 dedup trước khi tạo CSV splits — dữ liệu train/val/test đã sạch.
+      </div>
+      <div class="insight yellow">
+        <div class="i-label">Cache parquet</div>
+        <code>duplicate_hashes.parquet</code> lưu trong <code>assets/</code> — tái sử dụng để tăng tốc khi thêm dataset mới.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 8 ─────────────────────────────────────── -->
+  <section id="s8">
+    <div class="section-header">
+      <span class="section-num">Phần 8</span>
+      <h2>Bảng Tổng Hợp Thống Kê Theo Nguồn</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Tổng hợp toàn bộ số liệu thống kê vào một bảng — bao nhiêu ảnh mỗi loại, từ nguồn nào, cân bằng ra sao. Bảng này là "bản tóm tắt" của toàn bộ EDA và sẽ được trích dẫn trực tiếp trong báo cáo khoa học.</p>
+
+    <div class="card">
+      <div style="overflow-x:auto;padding:1rem">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Nguồn</th>
+              <th>Tổng</th>
+              <th>Thật</th>
+              <th>Giả</th>
+              <th>T/G Ratio</th>
+              <th>% tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>140k-StyleGAN</td>
+              <td>140,000</td>
+              <td class="n-real">70,000</td>
+              <td class="n-fake">70,000</td>
+              <td>1.000</td>
+              <td>44.2%</td>
+            </tr>
+            <tr>
+              <td>Deepfake-Real</td>
+              <td>173,200</td>
+              <td class="n-real">78,071</td>
+              <td class="n-fake">95,129</td>
+              <td>0.820</td>
+              <td>54.7%</td>
+            </tr>
+            <tr>
+              <td>Hard-FakeReal</td>
+              <td>1,289</td>
+              <td class="n-real">589</td>
+              <td class="n-fake">700</td>
+              <td>0.841</td>
+              <td>0.4%</td>
+            </tr>
+            <tr>
+              <td>ciplab</td>
+              <td>2,041</td>
+              <td class="n-real">1,081</td>
+              <td class="n-fake">960</td>
+              <td>1.126</td>
+              <td>0.6%</td>
+            </tr>
+            <tr>
+              <td><strong>Tổng cộng</strong></td>
+              <td><strong>316,530</strong></td>
+              <td class="n-real"><strong>149,741</strong></td>
+              <td class="n-fake"><strong>166,789</strong></td>
+              <td><strong>0.898</strong></td>
+              <td><strong>100%</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="insights">
+      <div class="insight yellow">
+        <div class="i-label">T/G Ratio = 0.898</div>
+        Lệch ~10% — nên đặt <code>pos_weight ≈ 1.11</code> trong <code>BCEWithLogitsLoss</code> để bù mất cân bằng.
+      </div>
+      <div class="insight blue">
+        <div class="i-label">Train: 221,571</div>
+        Val: 47,479 &nbsp;·&nbsp; Test: 47,480 &nbsp;·&nbsp; Phân chia stratified theo label.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── DECISIONS ─────────────────────────────────────── -->
+  <section id="decisions">
+    <div class="section-header">
+      <span class="section-num">Tóm Tắt</span>
+      <h2>Quyết Định Kỹ Thuật Từ EDA</h2>
+    </div>
+    <p class="section-purpose"><strong>Mục đích:</strong> Tổng hợp mọi phát hiện từ EDA thành danh sách hành động cụ thể cho bước huấn luyện AI tiếp theo — đây là "kết quả thực tế" của toàn bộ quá trình phân tích, trả lời câu hỏi "vậy chúng ta phải làm gì khác đi so với mặc định?"</p>
+
+    <div class="card">
+      <table class="action-table">
+        <thead>
+          <tr><th>Phát hiện từ EDA</th><th>Quyết định kỹ thuật</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>140k-StyleGAN chiếm ~44% tập tổng</td>
+            <td>Stratified sampling theo nguồn trong DataLoader</td>
+          </tr>
+          <tr>
+            <td>Ảnh đã ở 224×224 hoặc 256×256 vuông</td>
+            <td><code>Resize(224, 224)</code> không cần padding</td>
+          </tr>
+          <tr>
+            <td>Phân bố pixel gần với ImageNet</td>
+            <td>Dùng ImageNet normalization stats trực tiếp</td>
+          </tr>
+          <tr>
+            <td>FFT: ảnh Giả có artifact tần số cao</td>
+            <td>Thêm <code>ImageCompression(quality_lower=40)</code> vào <code>train_transform</code></td>
+          </tr>
+          <tr>
+            <td>Ba tập train/val/test độc lập hoàn toàn</td>
+            <td>Đánh giá final trên test set là tin cậy</td>
+          </tr>
+          <tr>
+            <td>T/G Ratio ≈ 0.898 (lệch ~10%)</td>
+            <td><code>pos_weight = 166789 / 149741 ≈ 1.11</code> trong loss</td>
+          </tr>
+          <tr>
+            <td>17,135 ảnh trùng đã loại bỏ</td>
+            <td>Ghi nhận trong phần Dataset báo cáo: "Sau dedup MD5, giữ lại 316,530 ảnh"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  DS200.F21.CN2 &nbsp;·&nbsp; Phát Hiện Khuôn Mặt Tạo Bởi AI &nbsp;·&nbsp;
+  Notebook: <code>notebooks/02_eda.ipynb</code> &nbsp;·&nbsp;
+  Ảnh: <code>reports/eda/assets/</code>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+# ── DS200.F21.CN2 — AI Face Detection ────────────────────────────────────
+# Python 3.11.15 recommended
+#
+# PyTorch must be installed separately — pick the right wheel for your
+# hardware at https://pytorch.org/get-started/locally/
+#
+#   GPU (CUDA 12.x):
+#     pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#   CPU only:
+#     pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+#
+# Then install everything else:
+#   pip install -r requirements.txt
+
+# ── Data & numerics ────────────────────────────────────────────────────────
+numpy>=1.26,<2.0          # torch-safe; use Python 3.11 to avoid ml-dtypes conflict
+pandas>=2.1
+pyarrow>=14.0             # parquet support (duplicate cache in EDA)
+
+# ── Image processing ───────────────────────────────────────────────────────
+Pillow>=10.0
+opencv-python-headless>=4.9   # used by albumentations; headless avoids GUI deps
+albumentations>=1.4
+
+# ── Machine learning ───────────────────────────────────────────────────────
+timm>=1.0                 # EfficientNet-B0 backbone
+scikit-learn>=1.4         # train_test_split, accuracy_score, roc_auc_score, etc.
+
+# ── Visualization & explainability ─────────────────────────────────────────
+matplotlib>=3.8
+grad-cam>=1.5             # pytorch-grad-cam: Grad-CAM overlays
+
+# ── Demo ───────────────────────────────────────────────────────────────────
+gradio>=4.0               # web demo (scripts/demo.py — planned)
+
+# ── Notebook environment ───────────────────────────────────────────────────
+jupyter>=1.0
+ipywidgets>=8.0           # tqdm.notebook progress bars
+tqdm>=4.66

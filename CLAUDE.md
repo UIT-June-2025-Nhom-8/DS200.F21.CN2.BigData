@@ -22,6 +22,23 @@ Do **not** translate: code, file paths, metric keys (`val_loss`, `AUC`), library
 
 ---
 
+## Audience by Document Type
+
+Different outputs target different readers — always match the register to the audience:
+
+| Document | Audience | Register |
+| -------- | -------- | -------- |
+| `reports/report_draft.md`, `reports/latex/` | Professors, academic evaluators | Formal academic Vietnamese. Use precise terminology. |
+| `reports/eda/eda_report.md`, `reports/eda/eda_report.html` | Non-technical readers (no background in AI or image processing) | **Plain, simple Vietnamese.** Avoid jargon. When a technical term is unavoidable, explain it in parentheses immediately after (e.g., "artifact (lỗi thị giác nhỏ)"). Use analogies over definitions. |
+| All other files in `reports/` | Internal project use | Default to plain Vietnamese unless context is clearly academic. |
+
+When writing or editing EDA reports specifically:
+- Replace code-level terms (`pos_weight`, `BCEWithLogitsLoss`, `LongestMaxSize`) with plain descriptions unless they appear inside a code block.
+- Add parenthetical glosses for: GAN, FFT, artifact, domain shift, data leakage, augmentation, stratified sampling.
+- Prefer analogies (e.g., "như bản in bị rỗ mực") over frequency/statistical language.
+
+---
+
 ## Project Structure
 
 ```
