@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Copilot Customization Guide — DS200 AI Face Detection</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --purple: #bc8cff;
+      --orange: #ffa657;
+      --red: #f85149;
+      --yellow: #e3b341;
+      --tag-agent: #1f6feb;
+      --tag-skill: #238636;
+      --tag-prompt: #9e6a03;
+      --tag-instr: #6e40c9;
+      --radius: 10px;
+      --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    nav {
+      width: 260px;
+      min-width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    nav .brand {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    nav .brand h2 { font-size: 14px; color: var(--accent); font-weight: 600; }
+    nav .brand p { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    nav a:hover, nav a.active {
+      color: var(--text);
+      background: var(--surface2);
+      border-left-color: var(--accent);
+    }
+    nav .nav-section {
+      padding: 16px 20px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    nav .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      padding: 48px 56px;
+      overflow-x: hidden;
+    }
+
+    /* ── Typography ── */
+    h1 { font-size: 32px; font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 8px; }
+    h2 { font-size: 22px; font-weight: 600; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 16px; font-weight: 600; margin: 28px 0 10px; color: var(--accent); }
+    p  { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    strong { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 60%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 80% 20%, rgba(88,166,255,.08), transparent);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(88,166,255,.15);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(88,166,255,.3);
+      margin-bottom: 14px;
+      letter-spacing: .06em;
+    }
+    .hero p { font-size: 15px; margin-top: 10px; max-width: 640px; }
+
+    /* ── Tags ── */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .tag-agent  { background: rgba(31,111,235,.2);  color: #79b8ff; border: 1px solid rgba(31,111,235,.4); }
+    .tag-skill  { background: rgba(35,134,54,.2);   color: #56d364; border: 1px solid rgba(35,134,54,.4); }
+    .tag-prompt { background: rgba(158,106,3,.2);   color: #f0b429; border: 1px solid rgba(158,106,3,.4); }
+    .tag-instr  { background: rgba(110,64,201,.2);  color: #bc8cff; border: 1px solid rgba(110,64,201,.4); }
+
+    /* ── Cards ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    @media (max-width: 700px) { .card-grid { grid-template-columns: 1fr; } main { padding: 24px 20px; } nav { display: none; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(88,166,255,.1);
+    }
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 10px; }
+    .card-name { font-size: 15px; font-weight: 600; color: var(--text); }
+    .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .card-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .tool-pill {
+      font-size: 11px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--mono);
+    }
+    .tool-pill.danger { color: var(--red); border-color: rgba(248,81,73,.3); background: rgba(248,81,73,.08); }
+    .card-file {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 4px 8px;
+      word-break: break-all;
+    }
+
+    /* ── Code / Command blocks ── */
+    .cmd-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 12px 0;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .cmd-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 14px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cmd-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .cmd-body { padding: 14px 16px; overflow-x: auto; }
+    .cmd-body code { display: block; white-space: pre; }
+    .hl-blue   { color: var(--accent); }
+    .hl-green  { color: var(--accent2); }
+    .hl-purple { color: var(--purple); }
+    .hl-orange { color: var(--orange); }
+    .hl-muted  { color: var(--muted); }
+
+    /* ── Table ── */
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+    th { text-align: left; padding: 8px 12px; background: var(--surface2); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    td code { font-family: var(--mono); font-size: 12px; background: var(--surface2); padding: 1px 5px; border-radius: 3px; color: var(--accent); }
+
+    /* ── Callout ── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 13px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout.info    { background: rgba(88,166,255,.08);  border: 1px solid rgba(88,166,255,.2); }
+    .callout.tip     { background: rgba(63,185,80,.08);   border: 1px solid rgba(63,185,80,.2); }
+    .callout.warning { background: rgba(227,179,65,.08);  border: 1px solid rgba(227,179,65,.2); }
+    .callout .callout-body p { margin: 0; color: var(--muted); }
+    .callout .callout-body strong { color: var(--text); }
+
+    /* ── Flow diagram ── */
+    .flow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .flow-row { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; justify-content: center; }
+    .flow-node {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 110px;
+      white-space: nowrap;
+    }
+    .flow-node.blue   { border-color: rgba(88,166,255,.5);  color: var(--accent); }
+    .flow-node.green  { border-color: rgba(63,185,80,.5);   color: var(--accent2); }
+    .flow-node.purple { border-color: rgba(188,140,255,.5); color: var(--purple); }
+    .flow-node.orange { border-color: rgba(255,166,87,.5);  color: var(--orange); }
+    .flow-arrow { color: var(--muted); font-size: 20px; padding: 0 8px; flex-shrink: 0; }
+
+    /* ── Skill detail ── */
+    .skill-detail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 16px 0;
+      overflow: hidden;
+    }
+    .skill-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-detail-body { padding: 16px 20px; }
+    .skill-detail-body p { font-size: 13px; }
+    .examples { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .example {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    .example-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+    .example-text { color: var(--text); }
+    .example-text .cmd { font-family: var(--mono); color: var(--accent); font-size: 12px; }
+
+    /* ── Section spacer ── */
+    section { margin-bottom: 16px; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav>
+    <div class="brand">
+      <h2>DS200 Copilot Guide</h2>
+      <p>AI Face Detection Project</p>
+    </div>
+
+    <span class="nav-section">Overview</span>
+    <a href="#overview"><span class="nav-icon">🗺️</span> How it works</a>
+    <a href="#architecture"><span class="nav-icon">🏗️</span> Architecture</a>
+
+    <span class="nav-section">Agents</span>
+    <a href="#onboarding"><span class="nav-icon">🧭</span> Onboarding</a>
+    <a href="#training"><span class="nav-icon">⚡</span> Training</a>
+    <a href="#paperwriter"><span class="nav-icon">✍️</span> PaperWriter</a>
+
+    <span class="nav-section">Skills</span>
+    <a href="#skill-report"><span class="nav-icon">📝</span> report-drafting</a>
+    <a href="#skill-editing"><span class="nav-icon">🔍</span> academic-editing</a>
+    <a href="#skill-latex"><span class="nav-icon">📐</span> latex-visualization</a>
+
+    <span class="nav-section">Other</span>
+    <a href="#prompt"><span class="nav-icon">📓</span> Notebooks &amp; Prompt</a>
+    <a href="#instructions"><span class="nav-icon">📏</span> code-style instructions</a>
+    <a href="#claude-code"><span class="nav-icon">🤖</span> Claude Code (CLAUDE.md)</a>
+    <a href="#cheatsheet"><span class="nav-icon">⚡</span> Quick cheat sheet</a>
+  </nav>
+
+  <!-- ── Main ── -->
+  <main>
+
+    <!-- Hero -->
+    <div class="hero">
+      <span class="hero-tag">DS200.F21.CN2 · UIT-VNU HCM</span>
+      <h1>GitHub Copilot<br>Customization Guide</h1>
+      <p>How to use the agents, skills, prompts, and instructions created for the <strong>AI Face Detection</strong> project — detect real vs. AI-generated faces with EfficientNet-B0.</p>
+    </div>
+
+    <!-- ── Overview ── -->
+    <section id="overview">
+      <h2>How it works</h2>
+      <p>All customizations live under <code>.github/</code> and extend GitHub Copilot's behavior in VS Code. There are four types:</p>
+
+      <table>
+        <thead>
+          <tr><th>Type</th><th>What it does</th><th>How you invoke it</th><th>Location</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td>A persona with specific tools and constraints. Routes complex, multi-step tasks.</td>
+            <td>Type <code>@AgentName</code> in chat, or pick from the agent selector</td>
+            <td><code>.github/agents/</code></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-skill">Skill</span></td>
+            <td>Domain knowledge loaded on-demand. Keeps context lean — loaded only when relevant.</td>
+            <td>Type <code>/skill-name</code> in chat, or invoked automatically by an agent</td>
+            <td><code>.github/skills/&lt;name&gt;/SKILL.md</code></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-prompt">Prompt</span></td>
+            <td>A parameterized template for a focused, single-purpose task.</td>
+            <td>Type <code>/prompt-name</code> in chat</td>
+            <td><code>.github/prompts/</code></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-instr">Instruction</span></td>
+            <td>Always-on style rules applied automatically to matching files.</td>
+            <td>Automatic — activates when you edit a matching file</td>
+            <td><code>.github/instructions/</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p><strong>Tip:</strong> You don't need to memorize invocation syntax. In the Copilot chat panel, type <code>@</code> to browse agents and <code>/</code> to browse skills and prompts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Architecture ── -->
+    <section id="architecture">
+      <h2>Architecture overview</h2>
+      <p>The three agents cover distinct tool boundaries, preventing unsafe cross-contamination:</p>
+
+      <div class="flow">
+        <div class="flow-row">
+          <div class="flow-node blue">@Onboarding<br><small style="font-weight:400;color:var(--muted)">read · search · web</small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node orange">@Training<br><small style="font-weight:400;color:var(--muted)">read · search · <span style="color:var(--red)">execute</span></small></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node green">@PaperWriter<br><small style="font-weight:400;color:var(--muted)">read · search · edit</small></div>
+        </div>
+        <div style="display:flex; justify-content:center; margin-top:20px; gap:16px; flex-wrap:wrap;">
+          <div style="text-align:center; opacity:.7; font-size:12px; color:var(--muted)">↑<br>Project overview<br>& exploration</div>
+          <div style="text-align:center; opacity:.7; font-size:12px; color:var(--muted)">↑<br>Run scripts<br>& evaluate model</div>
+          <div style="text-align:center; opacity:.7; font-size:12px; color:var(--muted)">↑<br>Draft · edit · LaTeX<br>via 3 skills</div>
+        </div>
+        <div style="margin-top:20px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+          <span class="tag tag-skill">📝 report-drafting</span>
+          <span class="tag tag-skill">🔍 academic-editing</span>
+          <span class="tag tag-skill">📐 latex-visualization</span>
+        </div>
+        <p style="text-align:center; margin-top:8px; font-size:12px; color:var(--muted)">↑ Skills invoked by @PaperWriter (or directly via <code>/skill-name</code>)</p>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <p><strong>Why keep Training separate?</strong> It's the only agent with <code>execute</code> access (runs shell commands). Keeping it isolated prevents editing or writing agents from accidentally running code.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Agents ── -->
+    <h2>Agents</h2>
+    <p>Agents are chosen by typing <code>@AgentName</code> in Copilot Chat. Each has a focused role and a minimal tool set.</p>
+
+    <div class="card-grid">
+
+      <!-- Onboarding -->
+      <div class="card" id="onboarding">
+        <div class="card-header">
+          <span class="card-name">🧭 Onboarding</span>
+          <span class="tag tag-agent">Agent</span>
+        </div>
+        <p class="card-desc">Visual project guide. Explains the pipeline, architecture, datasets, team roles, and directory layout using Mermaid diagrams and tables. Read-only — never modifies files.</p>
+        <div class="card-tools">
+          <span class="tool-pill">read</span>
+          <span class="tool-pill">search</span>
+          <span class="tool-pill">web</span>
+          <span class="tool-pill">renderMermaidDiagram</span>
+        </div>
+        <div class="card-file">.github/agents/onboarding-with-skills.md</div>
+      </div>
+
+      <!-- Training -->
+      <div class="card" id="training">
+        <div class="card-header">
+          <span class="card-name">⚡ Training</span>
+          <span class="tag tag-agent">Agent</span>
+        </div>
+        <p class="card-desc">Execution specialist. Runs training scripts, manages the 3-stage fine-tuning, evaluates checkpoints, runs robustness and cross-generator tests, launches Gradio demo. Also guides hyperparameter tuning — consult the built-in decision table when results are unsatisfactory.</p>
+        <div class="card-tools">
+          <span class="tool-pill">read</span>
+          <span class="tool-pill">search</span>
+          <span class="tool-pill danger">execute ⚠️</span>
+          <span class="tool-pill">todo</span>
+        </div>
+        <div class="card-file">.github/agents/training.agent.md</div>
+      </div>
+
+      <!-- PaperWriter -->
+      <div class="card" id="paperwriter" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <span class="card-name">✍️ PaperWriter</span>
+          <span class="tag tag-agent">Agent</span>
+        </div>
+        <p class="card-desc">All-in-one writing and typesetting agent. Routes requests to the appropriate skill: report drafting, academic editing, or LaTeX visualization. Saves drafts to <code>reports/</code> and LaTeX to <code>reports/latex/</code>.</p>
+        <div class="card-tools">
+          <span class="tool-pill">read</span>
+          <span class="tool-pill">search</span>
+          <span class="tool-pill">edit</span>
+          <span class="tool-pill">todo</span>
+        </div>
+        <div class="card-file">.github/agents/paper-writer.agent.md</div>
+      </div>
+
+    </div>
+
+    <h3>Example prompts for agents</h3>
+
+    <div class="cmd-block">
+      <div class="cmd-header">
+        <div class="dot" style="background:#ff5f57"></div>
+        <div class="dot" style="background:#febc2e"></div>
+        <div class="dot" style="background:#28c840"></div>
+        Copilot Chat
+      </div>
+      <div class="cmd-body"><code><span class="hl-blue">@Onboarding</span> <span class="hl-green">Give me a full project overview</span>
+<span class="hl-blue">@Onboarding</span> <span class="hl-green">Explain the 3-stage training pipeline</span>
+<span class="hl-blue">@Onboarding</span> <span class="hl-green">What datasets are used and how are they preprocessed?</span>
+
+<span class="hl-blue">@Training</span> <span class="hl-green">Run training stage 1</span>
+<span class="hl-blue">@Training</span> <span class="hl-green">Evaluate the best checkpoint on the test set</span>
+<span class="hl-blue">@Training</span> <span class="hl-green">Run robustness tests with JPEG compression</span>
+<span class="hl-blue">@Training</span> <span class="hl-green">Launch the Gradio demo</span>
+<span class="hl-blue">@Training</span> <span class="hl-green">val_AUC is stuck at 0.82, what should I change?</span>
+<span class="hl-blue">@Training</span> <span class="hl-green">Model is overfitting in stage 2, help me tune</span>
+
+<span class="hl-blue">@PaperWriter</span> <span class="hl-green">Draft the Methodology section</span>
+<span class="hl-blue">@PaperWriter</span> <span class="hl-green">Proofread the abstract</span>
+<span class="hl-blue">@PaperWriter</span> <span class="hl-green">Create a LaTeX table for main results</span>
+<span class="hl-blue">@PaperWriter</span> <span class="hl-green">Respond to reviewer: the dataset is too small</span></code></div>
+    </div>
+
+    <!-- ── Skills ── -->
+    <h2>Skills</h2>
+    <p>Skills are domain-knowledge bundles loaded on-demand. Invoke them directly with <code>/skill-name</code>, or let <code>@PaperWriter</code> route to them automatically.</p>
+
+    <!-- report-drafting -->
+    <div class="skill-detail" id="skill-report">
+      <div class="skill-detail-header">
+        <span class="tag tag-skill">Skill</span>
+        <strong>report-drafting</strong>
+        <span style="font-size:12px; font-family:var(--mono); color:var(--muted); margin-left:auto">.github/skills/report-drafting/SKILL.md</span>
+      </div>
+      <div class="skill-detail-body">
+        <p>Drafts or fills any section of the 15–20 page academic report. Reads real metrics from <code>reports/</code> and <code>artifacts/</code> before writing — knows the exact file names to look for (<code>eval_results.json</code>, <code>train_log.csv</code>, etc.). Uses <code>[INSERT: …]</code> placeholders when files don't exist yet. Never fabricates numbers. Saves output to <code>reports/report_draft.md</code>.</p>
+        <h3 style="margin-top:14px">Report structure</h3>
+        <table>
+          <tr><th>#</th><th>Section</th><th>Length</th></tr>
+          <tr><td>1</td><td>Abstract</td><td>~250 words</td></tr>
+          <tr><td>2</td><td>Introduction</td><td>1–2 pages</td></tr>
+          <tr><td>3</td><td>Related Work</td><td>1–2 pages</td></tr>
+          <tr><td>4</td><td>Methodology</td><td>3–4 pages</td></tr>
+          <tr><td>5</td><td>Experiments &amp; Results</td><td>3–4 pages</td></tr>
+          <tr><td>6</td><td>Discussion</td><td>1–2 pages</td></tr>
+          <tr><td>7</td><td>Conclusion</td><td>0.5–1 page</td></tr>
+          <tr><td>8</td><td>References</td><td>7 papers cited</td></tr>
+        </table>
+        <div class="examples">
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Draft the Methodology section</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Write the abstract (use results from reports/)</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Create a 14-slide deck outline</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">/report-drafting</span> Fill in the Experiments section</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Fill the Results section — read artifacts/ first</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- academic-editing -->
+    <div class="skill-detail" id="skill-editing">
+      <div class="skill-detail-header">
+        <span class="tag tag-skill">Skill</span>
+        <strong>academic-editing</strong>
+        <span style="font-size:12px; font-family:var(--mono); color:var(--muted); margin-left:auto">.github/skills/academic-editing/SKILL.md</span>
+      </div>
+      <div class="skill-detail-body">
+        <p>Edits and improves academic writing. Always shows a before/after diff with change explanations. Works one section at a time unless a full pass is requested.</p>
+        <h3 style="margin-top:14px">Editing modes</h3>
+        <table>
+          <tr><th>Mode</th><th>What it does</th></tr>
+          <tr><td>Proofreading</td><td>Grammar, spelling, punctuation, agreement</td></tr>
+          <tr><td>Clarity &amp; Concision</td><td>Remove redundancy, break long sentences, active voice</td></tr>
+          <tr><td>Academic Register</td><td>Elevate informal phrasing to formal academic English</td></tr>
+          <tr><td>Structural Review</td><td>Check each section stays within its scope</td></tr>
+          <tr><td>Contribution Statement</td><td>Enforce parallel (i)(ii)(iii) structure</td></tr>
+          <tr><td>Reviewer Response</td><td>Draft polite structured responses to reviewer comments</td></tr>
+        </table>
+        <div class="examples">
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Proofread the abstract</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Rewrite the Introduction more formally</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Refine the contribution statement</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Respond to reviewer: "The baseline comparison is insufficient"</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">/academic-editing</span> Check structure of Related Work section</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- latex-visualization -->
+    <div class="skill-detail" id="skill-latex">
+      <div class="skill-detail-header">
+        <span class="tag tag-skill">Skill</span>
+        <strong>latex-visualization</strong>
+        <span style="font-size:12px; font-family:var(--mono); color:var(--muted); margin-left:auto">.github/skills/latex-visualization/SKILL.md</span>
+      </div>
+      <div class="skill-detail-body">
+        <p>Generates compilable LaTeX for any figure, table, or diagram. All output includes <code>% Required:</code> package headers and is saved to <code>reports/latex/</code>.</p>
+        <h3 style="margin-top:14px">Supported outputs</h3>
+        <table>
+          <tr><th>Type</th><th>LaTeX tool</th><th>Example</th></tr>
+          <tr><td>Results tables</td><td><code>booktabs</code> + <code>siunitx</code></td><td>Acc / P / R / F1 / AUC table</td></tr>
+          <tr><td>Architecture diagrams</td><td><code>tikz</code> + <code>positioning</code></td><td>EfficientNet-B0 block diagram</td></tr>
+          <tr><td>Training curves / ROC</td><td><code>pgfplots</code></td><td>Loss curve, ROC curve</td></tr>
+          <tr><td>Robustness chart</td><td><code>pgfplots</code></td><td>Perturbation level vs accuracy</td></tr>
+          <tr><td>Confusion matrix</td><td><code>pgfplots</code> matrix</td><td>2×2 heatmap</td></tr>
+          <tr><td>Algorithm pseudocode</td><td><code>algorithm2e</code></td><td>3-stage training loop</td></tr>
+          <tr><td>Equations</td><td><code>amsmath</code></td><td>BCE loss, ImageNet normalization</td></tr>
+          <tr><td>Beamer slides</td><td>Beamer <code>metropolis</code></td><td>Single slide frame</td></tr>
+          <tr><td>Full document</td><td><code>IEEEtran</code></td><td>Complete paper shell</td></tr>
+        </table>
+        <div class="examples">
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> LaTeX table for main results</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> TikZ flowchart of the training pipeline</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> pgfplots ROC curve from reports/</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Algorithm block for 3-stage training loop</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">@PaperWriter</span> Full IEEE document shell</div></div>
+          <div class="example"><span class="example-icon">💬</span><div class="example-text"><span class="cmd">/latex-visualization</span> Beamer slide for model architecture</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Notebooks ── -->
+    <section id="prompt">
+      <h2>Notebooks &amp; Prompt</h2>
+
+      <h3>Data pipeline notebooks (from main branch)</h3>
+      <p>Two notebooks implement the full data pipeline. Run them in order before training.</p>
+
+      <table>
+        <thead><tr><th>#</th><th>Notebook</th><th>What it does</th><th>Key outputs</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><code>notebooks/00_download_datasets.ipynb</code></td>
+            <td>Downloads 4 Kaggle datasets. Idempotent — skips folders that already have files. Fill in Kaggle credentials in cell 1 before running.</td>
+            <td><code>data/raw/140k-real-and-fake-faces/</code><br><code>data/raw/deepfake-and-real-images/</code><br><code>data/raw/hardfakevsrealfaces/</code><br><code>data/raw/real-and-fake-face-detection/</code></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><code>notebooks/01_dataset_preparation.ipynb</code></td>
+            <td>Collects images, infers labels from directory names, deduplicates by MD5, checks class balance, plots EDA figures, splits 70/15/15 stratified, saves CSVs.</td>
+            <td><code>data/splits/train.csv</code><br><code>data/splits/val.csv</code><br><code>data/splits/test.csv</code><br><code>reports/class_balance.png</code><br><code>reports/sample_grid_real.png</code><br><code>reports/pixel_intensity.png</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <p><strong>Label inference</strong> is directory-name based. Real directories: <code>real</code>, <code>Real</code>, <code>training_real</code>. Fake directories: <code>fake</code>, <code>Fake</code>, <code>training_fake</code>. Output CSVs have columns: <code>image_path</code>, <code>label</code>.</p>
+        </div>
+      </div>
+
+      <h3>Prompt: /eda</h3>
+      <p>Generates additional EDA cells beyond the baseline plots already produced by <code>notebooks/01_dataset_preparation.ipynb</code>.</p>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-name">🔍 /eda</span>
+          <span class="tag tag-prompt">Prompt</span>
+        </div>
+        <p class="card-desc">Request any of 7 analysis types: per-source class distribution, image resolution scatter, aspect ratio histogram, mean pixel intensity per source, duplicate sample viewer, train/val/test overlap check, or low-confidence sample probe (requires a checkpoint).</p>
+        <div class="card-file">.github/prompts/eda.prompt.md</div>
+      </div>
+
+      <table>
+        <thead><tr><th>Task</th><th>Output</th></tr></thead>
+        <tbody>
+          <tr><td>A. Per-source distribution</td><td><code>reports/eda_per_source_distribution.png</code></td></tr>
+          <tr><td>B. Resolution scatter</td><td><code>reports/eda_resolution_scatter.png</code></td></tr>
+          <tr><td>C. Aspect ratio histogram</td><td><code>reports/eda_aspect_ratio.png</code></td></tr>
+          <tr><td>D. Pixel intensity per source</td><td><code>reports/eda_intensity_per_source.png</code></td></tr>
+          <tr><td>E. Duplicate viewer</td><td>Inline grid in notebook</td></tr>
+          <tr><td>F. Split overlap check</td><td>Console output</td></tr>
+          <tr><td>G. Low-confidence samples</td><td><code>reports/eda_low_confidence_samples.png</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Prompt: /data-pipeline</h3>
+      <p>Generates <code>scripts/prepare_data.py</code> — a standalone CLI wrapper that mirrors the notebook logic, for use in automated pipelines or CI.</p>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-name">⚙️ /data-pipeline</span>
+          <span class="tag tag-prompt">Prompt</span>
+        </div>
+        <p class="card-desc">Reads <code>notebooks/01_dataset_preparation.ipynb</code> first, then scaffolds a CLI version with the same dataset paths, label logic, MD5 dedup, imbalance check, and 70/15/15 stratified split. Output schema matches the notebook: <code>image_path</code>, <code>label</code>.</p>
+        <div class="card-file">.github/prompts/data-pipeline.prompt.md</div>
+      </div>
+
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <div class="dot" style="background:#ff5f57"></div>
+          <div class="dot" style="background:#febc2e"></div>
+          <div class="dot" style="background:#28c840"></div>
+          Copilot Chat
+        </div>
+        <div class="cmd-body"><code><span class="hl-purple">/data-pipeline</span>
+<span class="hl-muted"># → Scaffolds scripts/prepare_data.py (CLI version of the notebook)</span>
+
+<span class="hl-muted"># Then run it:</span>
+python scripts/prepare_data.py <span class="hl-orange">--data-root</span> ./data/raw <span class="hl-orange">--output-dir</span> ./data/splits</code></div>
+      </div>
+    </section>
+
+    <!-- ── Instructions ── -->
+    <section id="instructions">
+      <h2>Instructions: code-style</h2>
+      <p>Always-on style rules that activate automatically whenever you edit Python files matching <code>src/**/*.py</code>, <code>scripts/**/*.py</code>, or <code>notebooks/**/*.py</code>. No invocation needed.</p>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-name">📏 code-style.instructions.md</span>
+          <span class="tag tag-instr">Instruction</span>
+        </div>
+        <p class="card-desc">Enforces PyTorch + timm conventions, Dataset/DataLoader patterns, training loop idioms, evaluation practices, file organization, naming conventions, and reproducibility (seed setup).</p>
+        <div class="card-file">.github/instructions/code-style.instructions.md</div>
+      </div>
+
+      <h3>Key rules enforced</h3>
+      <table>
+        <tr><th>Area</th><th>Rule</th></tr>
+        <tr><td>Device</td><td>Always use a <code>device</code> variable; never hardcode <code>cuda:0</code></td></tr>
+        <tr><td>Mixed precision</td><td>Use <code>torch.cuda.amp.autocast()</code> + <code>GradScaler</code></td></tr>
+        <tr><td>timm</td><td>Create with <code>num_classes=0</code>, attach custom head separately</td></tr>
+        <tr><td>Loss</td><td><code>BCEWithLogitsLoss</code> — do not apply <code>sigmoid</code> before loss</td></tr>
+        <tr><td>Checkpoints</td><td>Save state dicts only, not full model objects</td></tr>
+        <tr><td>Metrics</td><td>Evaluate on test set; use <code>sklearn.metrics</code></td></tr>
+        <tr><td>Seeds</td><td>Set <code>random</code>, <code>numpy</code>, <code>torch</code>, <code>cuda</code> seeds at script start</td></tr>
+        <tr><td>Naming</td><td><code>PascalCase</code> classes · <code>snake_case</code> functions · <code>UPPER_SNAKE</code> constants</td></tr>
+        <tr><td>Config</td><td>All hyperparameters and paths from YAML in <code>configs/</code>, never hardcoded</td></tr>
+      </table>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <p><strong>Automatic:</strong> You don't need to do anything. When you open or edit a <code>.py</code> file under <code>src/</code>, <code>scripts/</code>, or <code>notebooks/</code>, Copilot will follow these rules automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Claude Code ── -->
+    <section id="claude-code">
+      <h2>Claude Code — CLAUDE.md</h2>
+      <p>If you use <strong>Claude Code</strong> (Anthropic's agentic CLI / VS Code extension) instead of or alongside GitHub Copilot, the <code>.github/</code> customizations are not read. Claude Code uses a flat <code>CLAUDE.md</code> file at the project root instead.</p>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-name">🤖 CLAUDE.md</span>
+          <span class="tag" style="background:var(--purple);color:#fff">Claude Code</span>
+        </div>
+        <p class="card-desc">A single Markdown file at the project root that Claude Code reads automatically on every session. Contains the complete project context: dataset paths, model architecture, training stages, HP tuning rules, code conventions, safety rules, and output file locations — distilled from all <code>.github/</code> customizations.</p>
+        <div class="card-file">CLAUDE.md</div>
+      </div>
+
+      <h3>How Claude Code reads CLAUDE.md files</h3>
+      <table>
+        <thead><tr><th>File location</th><th>Scope</th><th>Read automatically?</th></tr></thead>
+        <tbody>
+          <tr><td><code>CLAUDE.md</code> (project root) ✅</td><td>This project</td><td>Yes — every session</td></tr>
+          <tr><td><code>src/CLAUDE.md</code>, <code>scripts/CLAUDE.md</code>, …</td><td>That subdirectory only</td><td>Yes — when Claude navigates there</td></tr>
+          <tr><td><code>~/.claude/CLAUDE.md</code></td><td>All projects, all machines</td><td>Yes — user-level global</td></tr>
+          <tr><td><code>.claude/CLAUDE.md</code> ❌</td><td>—</td><td><strong>No.</strong> <code>.claude/</code> is for settings only</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <p>The <code>.claude/</code> directory holds <code>settings.json</code> (tool permissions, allowed commands) and <code>settings.local.json</code> (gitignored local overrides) — <strong>not</strong> the <code>CLAUDE.md</code> instruction file.</p>
+        </div>
+      </div>
+
+      <h3>What's in CLAUDE.md</h3>
+      <table>
+        <thead><tr><th>Section</th><th>Content</th></tr></thead>
+        <tbody>
+          <tr><td>Project structure</td><td>Directory layout, purpose of each folder</td></tr>
+          <tr><td>Datasets</td><td>4 Kaggle dataset paths, label inference rules, CSV schema</td></tr>
+          <tr><td>Data pipeline</td><td>Both notebooks, run order, Kaggle credentials reminder</td></tr>
+          <tr><td>Model</td><td>EfficientNet-B0 + custom head, loss, optimizer, device setup</td></tr>
+          <tr><td>Training stages</td><td>3-stage table (layers, LR, epochs, stop condition), checkpoint format</td></tr>
+          <tr><td>Evaluation</td><td>Test-set-only rule, metrics, cross-generator + robustness tests</td></tr>
+          <tr><td>HP tuning</td><td>Decision table: symptom → action</td></tr>
+          <tr><td>Code rules</td><td>PyTorch/timm conventions, Dataset patterns, naming, reproducibility seeds</td></tr>
+          <tr><td>Safety rules</td><td>Never touch data/raw/, never delete checkpoints without confirmation</td></tr>
+          <tr><td>Output locations</td><td>All key artifact and report paths</td></tr>
+          <tr><td>Report structure</td><td>8-section outline, placeholder rules for missing metrics</td></tr>
+        </tbody>
+      </table>
+
+      <h3>GitHub Copilot vs Claude Code</h3>
+      <table>
+        <thead><tr><th></th><th>GitHub Copilot (VS Code)</th><th>Claude Code</th></tr></thead>
+        <tbody>
+          <tr><td>Config location</td><td><code>.github/</code></td><td><code>CLAUDE.md</code> at project root</td></tr>
+          <tr><td>Agents</td><td><code>*.agent.md</code> — invoked with <code>@AgentName</code></td><td>No agent concept — all instructions in one file</td></tr>
+          <tr><td>Skills</td><td><code>SKILL.md</code> — invoked with <code>/skill-name</code></td><td>No skills — describe the task in natural language</td></tr>
+          <tr><td>Prompts</td><td><code>*.prompt.md</code> — invoked with <code>/prompt-name</code></td><td>No prompts — just ask Claude directly</td></tr>
+          <tr><td>Always-on rules</td><td><code>*.instructions.md</code> with <code>applyTo</code> pattern</td><td>Any section in <code>CLAUDE.md</code> is always active</td></tr>
+          <tr><td>Tool access</td><td>Declared per-agent in frontmatter</td><td>Controlled via <code>.claude/settings.json</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Typical Claude Code workflow for this project</h3>
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <div class="dot" style="background:#ff5f57"></div>
+          <div class="dot" style="background:#febc2e"></div>
+          <div class="dot" style="background:#28c840"></div>
+          Terminal — Claude Code
+        </div>
+        <div class="cmd-body"><code><span class="hl-muted"># Start Claude Code in the project root</span>
+cd DS200.F21.CN2.BigData
+claude
+
+<span class="hl-muted"># Claude reads CLAUDE.md automatically — then just ask:</span>
+<span class="hl-green">Run the data preparation notebooks in order</span>
+<span class="hl-green">Train stage 1 and show me the val_AUC after each epoch</span>
+<span class="hl-green">Evaluate the best checkpoint on the test set</span>
+<span class="hl-green">My val_AUC is stuck at 0.81, what should I change?</span>
+<span class="hl-green">Run robustness tests with JPEG compression</span>
+<span class="hl-green">Draft the Methodology section using results from reports/</span></code></div>
+      </div>
+    </section>
+
+    <!-- ── Cheat sheet ── -->
+    <section id="cheatsheet">
+      <h2>Quick cheat sheet</h2>
+
+      <div class="cmd-block">
+        <div class="cmd-header">
+          <div class="dot" style="background:#ff5f57"></div>
+          <div class="dot" style="background:#febc2e"></div>
+          <div class="dot" style="background:#28c840"></div>
+          All useful prompts at a glance
+        </div>
+        <div class="cmd-body"><code><span class="hl-muted">── ONBOARDING ──────────────────────────────────────────</span>
+<span class="hl-blue">@Onboarding</span> Give me a full project overview
+<span class="hl-blue">@Onboarding</span> Explain the 3-stage training pipeline
+<span class="hl-blue">@Onboarding</span> What datasets are used?
+<span class="hl-blue">@Onboarding</span> Walk me through the model architecture
+<span class="hl-blue">@Onboarding</span> Show the directory structure
+
+<span class="hl-muted">── TRAINING ────────────────────────────────────────────</span>
+<span class="hl-blue">@Training</span> Set up the environment
+<span class="hl-blue">@Training</span> Run training stage 1
+<span class="hl-blue">@Training</span> Run training stage 2
+<span class="hl-blue">@Training</span> Run training stage 3 (full fine-tune)
+<span class="hl-blue">@Training</span> Evaluate the best checkpoint on the test set
+<span class="hl-blue">@Training</span> Run cross-generator holdout test
+<span class="hl-blue">@Training</span> Run robustness tests (JPEG / blur / resize)
+<span class="hl-blue">@Training</span> Run Grad-CAM on 10 real + 10 fake samples
+<span class="hl-blue">@Training</span> Launch the Gradio demo
+
+<span class="hl-muted">── PAPER WRITING ───────────────────────────────────────</span>
+<span class="hl-blue">@PaperWriter</span> Draft the Abstract
+<span class="hl-blue">@PaperWriter</span> Draft the Introduction
+<span class="hl-blue">@PaperWriter</span> Draft the Related Work section
+<span class="hl-blue">@PaperWriter</span> Draft the Methodology section
+<span class="hl-blue">@PaperWriter</span> Fill the Experiments section from artifacts/
+<span class="hl-blue">@PaperWriter</span> Draft the Discussion section
+<span class="hl-blue">@PaperWriter</span> Write the Conclusion
+<span class="hl-blue">@PaperWriter</span> Create a 14-slide deck outline
+
+<span class="hl-muted">── ACADEMIC EDITING ────────────────────────────────────</span>
+<span class="hl-blue">@PaperWriter</span> Proofread the abstract
+<span class="hl-blue">@PaperWriter</span> Improve clarity of the Related Work section
+<span class="hl-blue">@PaperWriter</span> Refine the contribution statement
+<span class="hl-blue">@PaperWriter</span> Fix passive voice in the Methodology
+<span class="hl-blue">@PaperWriter</span> Respond to reviewer: "[paste comment here]"
+
+<span class="hl-muted">── LATEX ────────────────────────────────────────────────</span>
+<span class="hl-blue">@PaperWriter</span> LaTeX table for main results
+<span class="hl-blue">@PaperWriter</span> LaTeX table for cross-generator results
+<span class="hl-blue">@PaperWriter</span> TikZ flowchart of the training pipeline
+<span class="hl-blue">@PaperWriter</span> TikZ EfficientNet-B0 architecture diagram
+<span class="hl-blue">@PaperWriter</span> pgfplots training curves (loss + accuracy)
+<span class="hl-blue">@PaperWriter</span> pgfplots ROC curve
+<span class="hl-blue">@PaperWriter</span> pgfplots robustness line chart
+<span class="hl-blue">@PaperWriter</span> Algorithm block for 3-stage training loop
+<span class="hl-blue">@PaperWriter</span> Full IEEE document shell
+
+<span class="hl-muted">── DIRECT SKILL INVOCATION ─────────────────────────────</span>
+<span class="hl-purple">/report-drafting</span>     Draft or fill a report section
+<span class="hl-purple">/academic-editing</span>    Proofread or rewrite academic text
+<span class="hl-purple">/latex-visualization</span> Generate any LaTeX figure or table
+
+<span class="hl-muted">── HYPERPARAMETER TUNING ───────────────────────────────</span>
+<span class="hl-blue">@Training</span> val_AUC is stuck, what should I change?
+<span class="hl-blue">@Training</span> Model overfitting in stage 2, help me tune
+<span class="hl-blue">@Training</span> Robustness drops at JPEG q=50, how to fix?
+<span class="hl-blue">@Training</span> Cross-generator accuracy dropped 12pp, advice?
+
+<span class="hl-muted">── PROMPTS ─────────────────────────────────────────────</span>
+<span class="hl-purple">/eda</span>                 Generate additional EDA notebook cells
+<span class="hl-purple">/data-pipeline</span>       Scaffold scripts/prepare_data.py (CLI wrapper of notebook)
+
+<span class="hl-muted">── DATA PIPELINE NOTEBOOKS ─────────────────────────────</span>
+<span class="hl-muted"># Step 1: fill Kaggle credentials in cell 1 first</span>
+<span class="hl-blue">@Training</span>  Run notebooks/00_download_datasets.ipynb
+<span class="hl-blue">@Training</span>  Run notebooks/01_dataset_preparation.ipynb</code></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
