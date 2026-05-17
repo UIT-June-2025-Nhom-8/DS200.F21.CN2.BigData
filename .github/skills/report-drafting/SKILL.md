@@ -14,6 +14,8 @@ argument-hint: "Which section — e.g. 'Draft the Methodology section', 'Write a
 
 > **Language:** All drafted content must be in **Vietnamese**. Technical terms (EfficientNet-B0, BCEWithLogitsLoss, AUC-ROC, etc.) stay in English.
 
+> **Tone:** No emojis or decorative icons. This is an academic paper — maintain formal, professional prose throughout.
+
 ## Procedure
 
 ### 1. Scan Available Evidence

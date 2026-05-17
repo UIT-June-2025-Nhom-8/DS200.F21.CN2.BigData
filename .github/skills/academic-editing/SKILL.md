@@ -21,6 +21,7 @@ argument-hint: "What to edit — e.g. 'Proofread the abstract', 'Rewrite this pa
 - Never invent claims, results, or numbers
 - Work one section per invocation unless a full pass is explicitly requested
 - Only edit files under `reports/`
+- Do not use emojis or decorative icons in any output. This is an academic paper — professional tone only.
 
 ## Procedure
 
