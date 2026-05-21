@@ -21,3 +21,7 @@ venv/
 venv312/
 
 .claude/
+.conda
+
+# Cache EDA — tái tạo được bằng cách chạy lại notebooks/02_eda.ipynb
+reports/eda/assets/duplicate_hashes.parquet
