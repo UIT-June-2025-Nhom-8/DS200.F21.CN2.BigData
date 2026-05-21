@@ -474,7 +474,7 @@
       </div>
       <div class="insight blue">
         <div class="i-label">Deepfake-Real</div>
-        95,201 Thật / 95,134 Giả sau dedup — gần cân bằng, ảnh 256×256.
+        78,071 Thật / 95,129 Giả sau dedup — lệch nhẹ về Giả, ảnh 256×256.
       </div>
       <div class="insight yellow">
         <div class="i-label">Hard-FakeReal</div>
@@ -495,7 +495,7 @@
             <td>Cân nhắc <code>pos_weight = n_fake / n_real ≈ 1.11</code> trong <code>BCEWithLogitsLoss</code></td>
           </tr>
           <tr>
-            <td>140k-StyleGAN chiếm đa số (~88%)</td>
+            <td>140k-StyleGAN chiếm ~44% tổng thể</td>
             <td>Stratified sampling theo nguồn trong DataLoader để tránh overfit StyleGAN</td>
           </tr>
           <tr>

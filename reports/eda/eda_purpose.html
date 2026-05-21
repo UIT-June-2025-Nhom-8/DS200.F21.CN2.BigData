@@ -148,7 +148,7 @@
     <div class="pipe-step">
       <div class="icon">📦</div>
       <div class="label">Raw Data</div>
-      <div class="desc">4 dataset Kaggle · 140k+ ảnh · nhiều nguồn gốc khác nhau</div>
+      <div class="desc">4 dataset Kaggle · 316k ảnh · nhiều nguồn gốc khác nhau</div>
     </div>
     <div class="pipe-step">
       <div class="icon">🔍</div>
@@ -215,13 +215,13 @@
     <div class="card c-c">
       <div class="card-header">
         <div class="card-letter">C</div>
-        <h3>Tỉ lệ khung hình (Aspect Ratio)</h3>
+        <h3>Ảnh Mẫu: Thật vs Giả Theo Nguồn</h3>
       </div>
-      <p>Histogram của tỉ lệ width/height. Mục tiêu xác nhận tất cả ảnh là hình vuông (ratio ≈ 1.0) trước khi đưa vào EfficientNet-B0.</p>
+      <p>Lưới 8 cột × 4 hàng ảnh mẫu với viền xanh lá (Thật) và đỏ (Giả). Quan sát trực quan artifact ở vùng tai, hoa tai, biên khuôn mặt đặc trưng cho từng nguồn GAN.</p>
       <div class="tag-row">
-        <span class="tag why">Câu hỏi: Ảnh có vuông không?</span>
-        <span class="tag out">→ Chọn crop vs pad strategy</span>
-        <span class="tag risk">⚠ Nếu bỏ qua: méo hình sau resize</span>
+        <span class="tag why">Câu hỏi: Artifact nào lộ diện?</span>
+        <span class="tag out">→ Định hướng Grad-CAM & augmentation</span>
+        <span class="tag risk">⚠ Nếu bỏ qua: thiếu bằng chứng trực quan</span>
       </div>
     </div>
 
@@ -267,13 +267,13 @@
     <div class="card c-g">
       <div class="card-header">
         <div class="card-letter">G</div>
-        <h3>Label Noise Probe</h3>
+        <h3>Phân Tích Phổ Tần Số (FFT)</h3>
       </div>
-      <p>Dùng checkpoint tốt nhất để suy luận trên 50 ảnh ngẫu nhiên, hiển thị 10 ảnh có độ tin cậy thấp nhất — những ảnh khó phân loại nhất.</p>
+      <p>Tính phổ FFT log-scale trung bình cho Thật và Giả; vẽ hiệu Thật−Giả. Phát hiện "dấu vân tay kỹ thuật số" ẩn mà mắt thường không thấy nhưng mô hình CNN có thể học được.</p>
       <div class="tag-row">
-        <span class="tag why">Câu hỏi: Ảnh nào là hard cases?</span>
-        <span class="tag out">→ Cải thiện augmentation, focal loss</span>
-        <span class="tag risk">⚠ Yêu cầu checkpoint</span>
+        <span class="tag why">Câu hỏi: Ảnh Giả có dấu vân tay ẩn?</span>
+        <span class="tag out">→ Thêm ImageCompression augmentation</span>
+        <span class="tag risk">⚠ Nếu bỏ qua: bỏ lỡ đặc trưng tần số cao</span>
       </div>
     </div>
 
@@ -299,7 +299,7 @@
     <tbody>
       <tr>
         <td><span class="dot dot-a"></span>A — Class dist.</td>
-        <td>140k StyleGAN chiếm ~60% tổng dữ liệu</td>
+        <td>140k StyleGAN chiếm ~44% tổng dữ liệu</td>
         <td>Thêm <code>class_weight</code> trong loss hoặc oversample</td>
         <td>BCEWithLogitsLoss · Batch sampler</td>
       </tr>
@@ -310,10 +310,10 @@
         <td>albumentations transform</td>
       </tr>
       <tr>
-        <td><span class="dot dot-c"></span>C — Aspect ratio</td>
-        <td>Tất cả ảnh đều gần ratio = 1.0</td>
-        <td>Xác nhận không cần padding; chỉ cần resize</td>
-        <td>val_transform / train_transform</td>
+        <td><span class="dot dot-c"></span>C — Sample grid</td>
+        <td>StyleGAN: artifact ở tai/hoa tai; Deepfake: biên khuôn mặt không tự nhiên</td>
+        <td>Định hướng vùng quan sát Grad-CAM; thêm RandomHorizontalFlip vào augmentation</td>
+        <td>Grad-CAM · train_transform</td>
       </tr>
       <tr>
         <td><span class="dot dot-d"></span>D — Pixel intensity</td>
@@ -323,7 +323,7 @@
       </tr>
       <tr>
         <td><span class="dot dot-e"></span>E — Duplicates</td>
-        <td>X ảnh trùng MD5 đã bị loại bỏ</td>
+        <td>17,135 ảnh trùng MD5 đã bị loại bỏ</td>
         <td>Xác nhận pipeline dedup hoạt động đúng</td>
         <td>Tính toàn vẹn của split CSV</td>
       </tr>
@@ -334,10 +334,10 @@
         <td>Độ tin cậy của val/test metrics</td>
       </tr>
       <tr>
-        <td><span class="dot dot-g"></span>G — Hard cases</td>
-        <td>Ảnh StyleGAN gần biên giới quyết định</td>
-        <td>Thêm MixUp hoặc tăng Dropout 0.5→0.6</td>
-        <td>Stage 2/3 fine-tuning · Robustness</td>
+        <td><span class="dot dot-g"></span>G — FFT</td>
+        <td>Ảnh Giả có năng lượng dư ở tần số cao — dấu vân tay của quá trình AI tạo ảnh</td>
+        <td>Thêm <code>ImageCompression(quality_lower=40)</code> vào train_transform</td>
+        <td>train_transform · Robustness test</td>
       </tr>
     </tbody>
   </table>
@@ -354,64 +354,64 @@
     <div class="output-item">
       <div class="file-icon">📊</div>
       <div>
-        <div class="name">reports/class_balance.png</div>
-        <div class="from">01_preparation → Biểu đồ cân bằng lớp tổng thể</div>
-      </div>
-    </div>
-    <div class="output-item">
-      <div class="file-icon">🖼️</div>
-      <div>
-        <div class="name">reports/sample_grid_real.png</div>
-        <div class="from">01_preparation → Lưới ảnh Real mẫu</div>
-      </div>
-    </div>
-    <div class="output-item">
-      <div class="file-icon">🖼️</div>
-      <div>
-        <div class="name">reports/sample_grid_fake.png</div>
-        <div class="from">01_preparation → Lưới ảnh Fake mẫu</div>
-      </div>
-    </div>
-    <div class="output-item">
-      <div class="file-icon">📈</div>
-      <div>
-        <div class="name">reports/pixel_intensity.png</div>
-        <div class="from">01_preparation → Histogram cường độ pixel</div>
+        <div class="name">reports/eda/assets/eda_class_distribution.png</div>
+        <div class="from">Task A → Biểu đồ Thật/Giả theo nguồn (số lượng &amp; tỷ lệ)</div>
       </div>
     </div>
     <div class="output-item">
       <div class="file-icon">📊</div>
       <div>
-        <div class="name">reports/eda_per_source_distribution.png</div>
-        <div class="from">Task A → Phân phối lớp theo nguồn</div>
+        <div class="name">reports/eda/assets/eda_per_source_distribution.png</div>
+        <div class="from">Task A → Phân bố tổng thể theo nguồn dữ liệu</div>
       </div>
     </div>
     <div class="output-item">
       <div class="file-icon">🔵</div>
       <div>
-        <div class="name">reports/eda_resolution_scatter.png</div>
-        <div class="from">Task B → Scatter plot độ phân giải</div>
+        <div class="name">reports/eda/assets/eda_resolution.png</div>
+        <div class="from">Task B → Histogram phân bố độ phân giải</div>
       </div>
     </div>
     <div class="output-item">
-      <div class="file-icon">📉</div>
+      <div class="file-icon">🔵</div>
       <div>
-        <div class="name">reports/eda_aspect_ratio.png</div>
-        <div class="from">Task C → Histogram tỉ lệ khung hình</div>
+        <div class="name">reports/eda/assets/eda_resolution_scatter.png</div>
+        <div class="from">Task B → Scatter width × height với tham chiếu 224×224</div>
+      </div>
+    </div>
+    <div class="output-item">
+      <div class="file-icon">🖼️</div>
+      <div>
+        <div class="name">reports/eda/assets/eda_sample_grid.png</div>
+        <div class="from">Task C → Lưới 8×4 ảnh mẫu Thật vs Giả theo nguồn</div>
       </div>
     </div>
     <div class="output-item">
       <div class="file-icon">📦</div>
       <div>
-        <div class="name">reports/eda_intensity_per_source.png</div>
-        <div class="from">Task D → Box plot pixel theo nguồn</div>
+        <div class="name">reports/eda/assets/eda_pixel_stats.png</div>
+        <div class="from">Task D → Box plot cường độ pixel R/G/B theo nguồn</div>
+      </div>
+    </div>
+    <div class="output-item">
+      <div class="file-icon">📈</div>
+      <div>
+        <div class="name">reports/eda/assets/eda_intensity_per_source.png</div>
+        <div class="from">Task D → Histogram cường độ pixel theo từng nguồn</div>
+      </div>
+    </div>
+    <div class="output-item">
+      <div class="file-icon">🌀</div>
+      <div>
+        <div class="name">reports/eda/assets/eda_fft.png</div>
+        <div class="from">Task G → Phổ FFT log-scale Thật · Giả · Hiệu</div>
       </div>
     </div>
     <div class="output-item">
       <div class="file-icon">🔍</div>
       <div>
-        <div class="name">reports/eda_low_confidence_samples.png</div>
-        <div class="from">Task G → Lưới ảnh khó phân loại nhất</div>
+        <div class="name">reports/eda/assets/eda_duplicate_viewer.png</div>
+        <div class="from">Task E → Lưới nhóm ảnh trùng MD5 (nếu có)</div>
       </div>
     </div>
   </div>
