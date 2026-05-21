@@ -32,6 +32,8 @@ Determine the task type from the user's request, then invoke the appropriate ski
 | Write / draft / fill a report section, abstract, introduction, related work, methodology, results, discussion, conclusion, slide outline | `/report-drafting`     |
 | Proofread, fix grammar, improve clarity, rewrite paragraph, academic English, transition, contribution statement, reviewer response      | `/academic-editing`    |
 | LaTeX table, TikZ diagram, pgfplots chart, algorithm block, equation, Beamer slide, full document shell                                  | `/latex-visualization` |
+| Check project readiness, what results exist, what stage we're on, is data ready, what metrics are available before writing               | `/training-planner`    |
+| Review, audit, or validate code in `src/` or `scripts/` before citing or describing it in the paper                                      | `/code-review`         |
 
 If a single request spans multiple tasks (e.g., "draft the Results section AND create the LaTeX table for it"), complete them sequentially: draft first, then LaTeX.
 
