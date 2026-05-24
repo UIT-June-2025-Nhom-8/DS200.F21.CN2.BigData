@@ -1,0 +1,204 @@
+# Training Configuration for AI-Generated Face Detection
+# Model: EfficientNet-B0 (timm pretrained)
+# Hardware: RTX 4070/5070 12GB VRAM
+
+# =============================================================================
+# HYPERPARAMETERS & RATIONALE
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Data
+# -----------------------------------------------------------------------------
+data:
+  root_dir: "data"
+  splits_dir: "data/splits"
+  train_csv: "train.csv"
+  val_csv: "val.csv"
+  test_csv: "test.csv"
+
+  # Image size: 224x224
+  # Rationale: EfficientNet-B0 default input size (from timm documentation)
+  image_size: 224
+
+  # ImageNet normalization
+  # Rationale: Model pretrained on ImageNet → must use same mean/std
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+  # Batch size: 128
+  # Rationale: EfficientNet-B0 + mixed precision (FP16) fits ~128 images in 12GB VRAM
+  # Without mixed precision: only ~64-96 images
+  batch_size: 128
+
+  num_workers: 2  # DataLoader workers (giảm từ 8 xuống 2 để tiết kiệm RAM)
+
+# -----------------------------------------------------------------------------
+# Augmentation (train set only)
+# -----------------------------------------------------------------------------
+augmentation:
+  # Rationale: Help model generalize to real-world variations
+  # - HorizontalFlip: faces can be mirrored
+  # - RandomBrightnessContrast: lighting variations
+  # - ShiftScaleRotate: slight pose/angle changes
+  # - CoarseDropout: prevent overfitting to specific regions
+
+  horizontal_flip:
+    p: 0.5
+
+  random_brightness_contrast:
+    brightness_limit: 0.2
+    contrast_limit: 0.2
+    p: 0.5
+
+  shift_scale_rotate:
+    shift_limit: 0.1
+    scale_limit: 0.1
+    rotate_limit: 15
+    p: 0.5
+
+  coarse_dropout:
+    max_holes: 8
+    max_height: 16
+    max_width: 16
+    p: 0.3
+
+# -----------------------------------------------------------------------------
+# Model
+# -----------------------------------------------------------------------------
+model:
+  # Backbone: EfficientNet-B0
+  # Rationale:
+  # - Lighter than ResNet (5.3M params vs 25M)
+  # - Similar accuracy to ResNet-50
+  # - Faster training on limited GPU
+  # - Pretrained on ImageNet → good feature extractor
+  backbone: "efficientnet_b0"
+  pretrained: true
+
+  # Custom classifier head: 1280 → 256 → 1
+  # Rationale:
+  # - 1280: EfficientNet-B0 output feature dimension
+  # - 256: Hidden layer wide enough to learn real/fake decision boundary
+  # - Dropout 0.5: Prevent overfitting (fake images may have obvious artifacts)
+  classifier:
+    hidden_dim: 256
+    dropout: 0.5
+
+# -----------------------------------------------------------------------------
+# Training - 3 Stage Progressive Unfreezing
+# -----------------------------------------------------------------------------
+# Rationale: Gradual unfreezing prevents catastrophic forgetting of pretrained features
+# Stage 1: Train head only → learn basic real/fake separation
+# Stage 2: Fine-tune top blocks → adapt high-level features to face domain
+# Stage 3: Fine-tune all → full adaptation
+
+training:
+  # Mixed precision training
+  # Rationale:
+  # - RTX 4070/5070 has tensor cores → ~1.5-2x faster with FP16
+  # - Reduces VRAM usage → allows batch_size=128
+  mixed_precision: true
+
+  # Loss: Binary Cross-Entropy with Logits
+  # Rationale: Standard for binary classification, numerically stable
+  loss: "BCEWithLogitsLoss"
+
+  # Optimizer: AdamW
+  # Rationale:
+  # - Better than Adam for fine-tuning (decoupled weight decay)
+  # - weight_decay=1e-4 is default from AdamW paper (Loshchilov & Hutter, 2019)
+  optimizer:
+    type: "AdamW"
+    weight_decay: 0.0001
+
+  # Max epochs per stage
+  # Rationale:
+  # - Stage 1 (new head): converges fast ~10-15 epochs
+  # - Stage 2-3: need more epochs but EarlyStopping will stop early
+  max_epochs_per_stage: 30
+
+  # Stage 1: Freeze backbone, train head only
+  # Rationale:
+  # - Head initialized randomly → needs higher LR to converge
+  # - Backbone pretrained → keep frozen to preserve ImageNet features
+  stage1:
+    name: "freeze_backbone"
+    freeze_backbone: true
+    unfreeze_blocks: []
+    learning_rate: 0.0001  # 1e-4
+
+  # Stage 2: Unfreeze top 2 MBConv blocks (blocks 5-6)
+  # Rationale:
+  # - Top blocks learn high-level features → adapt them to face domain
+  # - LR 10x lower than stage 1 to avoid destroying pretrained weights
+  stage2:
+    name: "unfreeze_top_blocks"
+    freeze_backbone: false
+    unfreeze_blocks: [5, 6]  # EfficientNet-B0 has 7 MBConv blocks (0-6)
+    learning_rate: 0.00001  # 1e-5
+
+  # Stage 3: Unfreeze all
+  # Rationale:
+  # - Full fine-tuning for maximum adaptation
+  # - Very low LR to avoid catastrophic forgetting
+  stage3:
+    name: "unfreeze_all"
+    freeze_backbone: false
+    unfreeze_blocks: "all"
+    learning_rate: 0.000001  # 1e-6
+
+# -----------------------------------------------------------------------------
+# Callbacks
+# -----------------------------------------------------------------------------
+callbacks:
+  # EarlyStopping: patience=5
+  # Rationale: Stop if val_loss doesn't improve for 5 epochs → prevent overfitting
+  early_stopping:
+    monitor: "val_loss"
+    patience: 5
+    mode: "min"
+
+  # ReduceLROnPlateau: patience=3, factor=0.3
+  # Rationale:
+  # - If val_loss plateaus for 3 epochs → reduce LR to 30%
+  # - Helps model fine-tune when near optimum
+  reduce_lr_on_plateau:
+    monitor: "val_loss"
+    patience: 3
+    factor: 0.3
+    mode: "min"
+    min_lr: 0.0000001  # 1e-7
+
+  # ModelCheckpoint: save best model per stage
+  # Rationale: Keep best weights according to val_loss
+  model_checkpoint:
+    monitor: "val_loss"
+    mode: "min"
+    save_top_k: 1
+    save_last: true
+
+# -----------------------------------------------------------------------------
+# Paths
+# -----------------------------------------------------------------------------
+paths:
+  checkpoints_dir: "artifacts/checkpoints"
+  logs_dir: "artifacts/logs"
+  results_dir: "artifacts/results"
+
+# -----------------------------------------------------------------------------
+# Evaluation Metrics
+# -----------------------------------------------------------------------------
+metrics:
+  # Rationale: Comprehensive evaluation for binary classification
+  - "accuracy"
+  - "precision"
+  - "recall"
+  - "f1"
+  - "auc_roc"
+  - "confusion_matrix"
+  - "roc_curve"
+
+# -----------------------------------------------------------------------------
+# Random Seed
+# -----------------------------------------------------------------------------
+seed: 42  # For reproducibility

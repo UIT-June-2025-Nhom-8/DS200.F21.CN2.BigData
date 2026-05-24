@@ -8,7 +8,7 @@ data/splits/
 # Python
 __pycache__/
 *.py[cod]
-*.pth
+# *.pth  # Commented out to allow committing trained models
 *.ckpt
 
 
@@ -17,6 +17,10 @@ __pycache__/
 *.egg-info/
 dist/
 
+venv/
+venv312/
+
+.claude/
 .conda
 
 # Cache EDA — tái tạo được bằng cách chạy lại notebooks/02_eda.ipynb
