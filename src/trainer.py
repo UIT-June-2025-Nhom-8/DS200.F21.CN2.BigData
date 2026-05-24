@@ -33,9 +33,9 @@ class Trainer:
         # Loss function
         self.criterion = nn.BCEWithLogitsLoss()
 
-        # Mixed precision scaler
-        self.use_amp = config["training"]["mixed_precision"]
-        self.scaler = GradScaler('cuda') if self.use_amp else None
+        # Mixed precision scaler (only enable on CUDA)
+        self.use_amp = config["training"]["mixed_precision"] and device.type == 'cuda'
+        self.scaler = GradScaler(device.type) if self.use_amp else None
 
         # Checkpoints directory
         self.ckpt_dir = Path(config["paths"]["checkpoints_dir"])
@@ -216,7 +216,7 @@ class Trainer:
 
                 # Forward pass
                 if self.use_amp:
-                    with autocast('cuda'):
+                    with autocast(self.device.type):
                         logits = self.model(images)
                         loss = self.criterion(logits, labels)
                 else:

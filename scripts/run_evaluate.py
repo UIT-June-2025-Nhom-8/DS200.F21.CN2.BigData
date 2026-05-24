@@ -75,8 +75,19 @@ def main():
     checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
     print(f"✓ Loaded checkpoint from epoch {checkpoint.get('epoch', 'N/A')}")
-    print(f"  Val Loss: {checkpoint.get('val_loss', 'N/A'):.4f}")
-    print(f"  Val Acc : {checkpoint.get('val_acc', 'N/A'):.4f}")
+
+    val_loss = checkpoint.get('val_loss')
+    val_acc = checkpoint.get('val_acc')
+
+    if isinstance(val_loss, (int, float)):
+        print(f"  Val Loss: {val_loss:.4f}")
+    else:
+        print(f"  Val Loss: N/A")
+
+    if isinstance(val_acc, (int, float)):
+        print(f"  Val Acc : {val_acc:.4f}")
+    else:
+        print(f"  Val Acc : N/A")
 
     # Evaluate
     results_dir = Path(config["paths"]["results_dir"])

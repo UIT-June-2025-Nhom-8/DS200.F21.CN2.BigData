@@ -28,8 +28,8 @@ def load_config(config_path):
 def preprocess_image(image_path, image_size=224):
     """Load and preprocess image"""
     # Load image
-    image = Image.open(image_path).convert("RGB")
-    image = np.array(image)
+    with Image.open(image_path) as img:
+        image = np.array(img.convert("RGB"))
 
     # Transform (same as validation set - no augmentation)
     transform = A.Compose([
@@ -110,7 +110,11 @@ def main():
 
     print(f"Loaded checkpoint: {checkpoint_path}")
     print(f"Checkpoint epoch: {checkpoint.get('epoch', 'N/A')}")
-    print(f"Val accuracy: {checkpoint.get('val_acc', 'N/A'):.4f}")
+    val_acc = checkpoint.get('val_acc')
+    if isinstance(val_acc, (int, float)):
+        print(f"Val accuracy: {val_acc:.4f}")
+    else:
+        print(f"Val accuracy: N/A")
 
     # Preprocess image
     image_path = Path(args.image_path)

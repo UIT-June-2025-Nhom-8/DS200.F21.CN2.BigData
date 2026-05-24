@@ -91,18 +91,33 @@ class FaceDetectionModel(nn.Module):
         Unfreeze specific MBConv blocks in EfficientNet (Stage 2)
 
         Args:
-            block_indices: List of block indices to unfreeze (e.g., [6, 7])
+            block_indices: List of block indices to unfreeze (e.g., [5, 6])
                           EfficientNet-B0 has 7 blocks (indices 0-6)
         """
+        # Validate block indices
+        max_block_idx = 6  # EfficientNet-B0 has blocks 0-6
+        invalid_indices = [idx for idx in block_indices if idx < 0 or idx > max_block_idx]
+        if invalid_indices:
+            raise ValueError(
+                f"Invalid block indices: {invalid_indices}. "
+                f"EfficientNet-B0 only has blocks 0-{max_block_idx}."
+            )
+
         # First freeze all
         self.freeze_backbone()
 
         # Then unfreeze specified blocks
         for idx in block_indices:
             block_name = f"blocks.{idx}"
+            unfrozen_count = 0
             for name, param in self.backbone.named_parameters():
                 if name.startswith(block_name):
                     param.requires_grad = True
+                    unfrozen_count += 1
+
+            # Warn if no parameters were unfrozen for this block
+            if unfrozen_count == 0:
+                print(f"Warning: No parameters found for block {idx}")
 
     def get_trainable_params(self):
         """Return list of trainable parameters"""

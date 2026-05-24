@@ -127,14 +127,14 @@ training:
     unfreeze_blocks: []
     learning_rate: 0.0001  # 1e-4
 
-  # Stage 2: Unfreeze top 2 MBConv blocks (blocks 6-7)
+  # Stage 2: Unfreeze top 2 MBConv blocks (blocks 5-6)
   # Rationale:
   # - Top blocks learn high-level features → adapt them to face domain
   # - LR 10x lower than stage 1 to avoid destroying pretrained weights
   stage2:
     name: "unfreeze_top_blocks"
     freeze_backbone: false
-    unfreeze_blocks: [6, 7]  # EfficientNet-B0 has 7 MBConv blocks (0-6)
+    unfreeze_blocks: [5, 6]  # EfficientNet-B0 has 7 MBConv blocks (0-6)
     learning_rate: 0.00001  # 1e-5
 
   # Stage 3: Unfreeze all

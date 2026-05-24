@@ -73,8 +73,8 @@
 
 | Parameter | Value | Rationale |
 |-----------|-------|-----------|
-| **Frozen Layers** | Blocks 0-5 | Keep low-level features frozen |
-| **Trainable Layers** | Blocks 6-7 + head | Top blocks learn high-level features → adapt to face domain |
+| **Frozen Layers** | Blocks 0-4 | Keep low-level features frozen |
+| **Trainable Layers** | Blocks 5-6 + head | Top blocks learn high-level features → adapt to face domain |
 | **Learning Rate** | 1e-5 | 10× lower than Stage 1 to avoid destroying pretrained weights |
 | **Expected Epochs** | ~15-20 | Fine-tune high-level features |
 

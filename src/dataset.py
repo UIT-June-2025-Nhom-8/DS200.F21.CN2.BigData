@@ -30,15 +30,15 @@ class FaceDataset(Dataset):
         self,
         csv_path,
         image_size=224,
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225],
+        mean=None,
+        std=None,
         augment=False,
         augment_config=None
     ):
         self.df = pd.read_csv(csv_path)
         self.image_size = image_size
-        self.mean = mean
-        self.std = std
+        self.mean = list(mean) if mean is not None else [0.485, 0.456, 0.406]
+        self.std = list(std) if std is not None else [0.229, 0.224, 0.225]
         self.augment = augment
 
         # Label mapping: Real=0, Fake=1
@@ -117,8 +117,8 @@ class FaceDataset(Dataset):
         # Load image
         img_path = row["image_path"]
         try:
-            image = Image.open(img_path).convert("RGB")
-            image = np.array(image)
+            with Image.open(img_path) as img:
+                image = np.array(img.convert("RGB"))
         except Exception as e:
             print(f"[ERROR] Failed to load {img_path}: {e}")
             # Return a black image as fallback

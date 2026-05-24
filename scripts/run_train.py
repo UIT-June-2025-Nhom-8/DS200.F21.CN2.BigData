@@ -31,7 +31,7 @@ def set_seed(seed):
 
 def load_config(config_path):
     """Load YAML config file"""
-    with open(config_path, "r") as f:
+    with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
     return config
 

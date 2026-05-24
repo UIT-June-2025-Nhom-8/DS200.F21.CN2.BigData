@@ -116,8 +116,8 @@ from albumentations.pytorch import ToTensorV2
 
 def preprocess_image(image_path):
     # Load image
-    image = Image.open(image_path).convert("RGB")
-    image = np.array(image)
+    with Image.open(image_path) as img:
+        image = np.array(img.convert("RGB"))
     
     # Transform (resize + normalize)
     transform = A.Compose([
