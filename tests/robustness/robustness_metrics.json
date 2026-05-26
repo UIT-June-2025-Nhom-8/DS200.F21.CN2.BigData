@@ -1,0 +1,35 @@
+{
+  "_note": "Values corrected from Kaggle run. Kaggle notebook used Real=1/Fake=0 (inverted vs training Real=0/Fake=1). Corrected: acc = 1 - raw_acc, auc = 1 - raw_auc.",
+  "baseline": {
+    "accuracy": 0.9733,
+    "auc": 0.9970
+  },
+  "jpeg_q70": {
+    "accuracy": 0.8233,
+    "auc": 0.9597
+  },
+  "jpeg_q50": {
+    "accuracy": 0.7977,
+    "auc": 0.9330
+  },
+  "jpeg_q30": {
+    "accuracy": 0.7860,
+    "auc": 0.9030
+  },
+  "resize_50": {
+    "accuracy": 0.8539,
+    "auc": 0.9358
+  },
+  "resize_25": {
+    "accuracy": 0.7287,
+    "auc": 0.8040
+  },
+  "blur_s1": {
+    "accuracy": 0.9045,
+    "auc": 0.9776
+  },
+  "blur_s2": {
+    "accuracy": 0.7365,
+    "auc": 0.8211
+  }
+}
