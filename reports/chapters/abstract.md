@@ -1,0 +1,14 @@
+# Abstract (Tóm Tắt)
+
+> **Độ dài mục tiêu:** ~250 từ  
+> **Cập nhật:** 28/05/2026
+
+---
+
+Sự phổ biến của các mô hình sinh ảnh bằng trí tuệ nhân tạo — đặc biệt là mạng đối nghịch sinh (GAN) và mô hình khuếch tán — đặt ra nhu cầu cấp thiết về các phương pháp phát hiện khuôn mặt giả mạo tự động, đáng tin cậy và có khả năng tổng quát hóa đa nguồn. Nghiên cứu này đề xuất một pipeline học sâu hoàn chỉnh cho bài toán phân loại nhị phân ảnh khuôn mặt thật và ảnh khuôn mặt do AI tổng hợp, sử dụng kiến trúc EfficientNet-B0 với chiến lược fine-tuning 3 giai đoạn (progressive unfreezing) trên tập dữ liệu tổng hợp từ bốn nguồn Kaggle đa dạng.
+
+Tập dữ liệu được xây dựng từ 316.530 ảnh (sau loại trùng lặp MD5) từ bốn bộ dữ liệu đại diện cho các phương pháp tổng hợp khác nhau: StyleGAN2 (140k-StyleGAN), ghép khuôn mặt (Deepfake-Real), GAN bậc cao khó phân biệt (Hard-FakeReal) và ciplab. Dữ liệu được phân chia stratified 70/15/15 để đảm bảo đánh giá không thiên vị trên tập test độc lập.
+
+Mô hình EfficientNet-B0 pretrained trên ImageNet được fine-tuned theo ba giai đoạn với learning rate giảm dần (1×10⁻⁴ → 1×10⁻⁵ → 1×10⁻⁶), kết hợp mixed-precision FP16 và các kỹ thuật augmentation gồm HorizontalFlip, RandomBrightnessContrast, ShiftScaleRotate và CoarseDropout. Toàn bộ siêu tham số được quản lý qua file cấu hình YAML để đảm bảo tái lập hoàn toàn.
+
+Trên tập test 47.480 ảnh, mô hình đạt Accuracy 97,33%, Precision 97,73%, Recall 97,18%, F1-Score 97,45% và AUC-ROC 99,70% — cải thiện lần lượt +10,71 điểm phần trăm accuracy so với mô hình giai đoạn 1 chỉ huấn luyện phần đầu phân loại. Ngoài đánh giá chuẩn, nghiên cứu thực hiện bài kiểm tra cross-generator (hold-out từng nguồn) để đo khả năng tổng quát hóa, bài kiểm tra robustness với nhiễu JPEG/blur/downscale, và trực quan hóa Grad-CAM để giải thích vùng artifact mà mô hình học được. Kết quả cho thấy chiến lược fine-tuning 3 giai đoạn trên bộ dữ liệu đa nguồn là phương pháp hiệu quả cho bài toán phát hiện khuôn mặt AI-generated với yêu cầu khả năng tổng quát hóa thực tế.

@@ -1,0 +1,224 @@
+% ============================================================
+% DS200.F21.CN2 — Phát Hiện Ảnh Khuôn Mặt Tạo Bởi AI
+% XeLaTeX | A4 | Lề 2,54 cm | Times New Roman 13pt
+% Compile: xelatex -interaction=nonstopmode main.tex
+% ============================================================
+
+\documentclass[13pt, a4paper]{report}
+
+% ------ Encoding & Font ------
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont[Scale=0.9]{Courier New}
+
+% ------ Vietnamese ------
+\usepackage{polyglossia}
+\setmainlanguage{vietnamese}
+\setotherlanguage{english}
+
+% ------ Page Layout ------
+\usepackage[
+  a4paper,
+  top=2.54cm,
+  bottom=2.54cm,
+  left=2.54cm,
+  right=2.54cm,
+  headheight=15pt
+]{geometry}
+
+% ------ Typography ------
+\usepackage{setspace}
+\onehalfspacing                      % 1,5 dòng — chuẩn báo cáo UIT
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{6pt}
+
+% ------ Math ------
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{mathtools}
+
+% ------ Tables ------
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{makecell}
+\renewcommand{\arraystretch}{1.3}
+
+% ------ Figures ------
+\usepackage{graphicx}
+\graphicspath{
+  {../}
+  {../eda/assets/}
+  {../../artifacts/results/}
+}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{font=small, labelfont=bf, labelsep=period}
+
+% ------ Colors ------
+\usepackage[table, xcdraw]{xcolor}
+\definecolor{uitblue}{RGB}{0, 82, 155}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+\definecolor{codegray}{RGB}{248, 248, 248}
+
+% ------ Code Listings ------
+\usepackage{listings}
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  showstringspaces=false,
+  tabsize=4,
+  captionpos=b
+}
+\lstdefinestyle{python}{
+  language=Python,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{orange!80!black},
+  commentstyle=\color{green!50!black}\itshape,
+}
+\lstdefinestyle{yaml}{
+  language={},
+  keywordstyle=\color{uitblue}\bfseries,
+  stringstyle=\color{orange!80!black},
+  commentstyle=\color{green!50!black}\itshape,
+}
+
+% ------ Hyperlinks ------
+\usepackage[
+  colorlinks=true,
+  linkcolor=uitblue,
+  citecolor=uitblue,
+  urlcolor=uitblue,
+  bookmarks=true,
+  bookmarksopen=true
+]{hyperref}
+\usepackage{bookmark}
+
+% ------ Header & Footer ------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{DS200.F21.CN2 — Phát Hiện Ảnh Khuôn Mặt Tạo Bởi AI}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[R]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% ------ Chapter & Section Formatting ------
+\usepackage{titlesec}
+\titleformat{\chapter}[block]
+  {\normalfont\Large\bfseries\centering}
+  {CHƯƠNG \thechapter.}
+  {0.5em}{}
+\titlespacing*{\chapter}{0pt}{20pt}{14pt}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries}
+  {\thesection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}
+  {\thesubsection.}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\itshape}
+  {\thesubsubsection.}{0.5em}{}
+
+% ------ Table of Contents ------
+\usepackage{tocloft}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftsecfont}{}
+\renewcommand{\cftchappagefont}{\bfseries}
+\setlength{\cftbeforechapskip}{4pt}
+
+% ------ Bibliography ------
+\usepackage[numbers, sort&compress]{natbib}
+\bibliographystyle{plainnat}
+
+% ------ Utilities ------
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=2pt, topsep=4pt}
+\setlist[enumerate]{itemsep=2pt, topsep=4pt}
+
+% ============================================================
+\begin{document}
+
+% ==================== TRANG BÌA ====================
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+
+  {\large\bfseries ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH}\\[4pt]
+  {\large\bfseries TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN}\\[4pt]
+  {\normalsize Khoa Khoa học và Kỹ thuật Thông tin}
+
+  \vspace{1cm}
+  \rule{0.6\linewidth}{2pt}
+  \vspace{1cm}
+
+  {\Huge\bfseries\color{uitblue} BÁO CÁO ĐỀ TÀI}\\[12pt]
+  {\LARGE\bfseries PHÁT HIỆN ẢNH KHUÔN MẶT TẠO BỞI TRÍ TUỆ NHÂN TẠO}\\[8pt]
+  {\large Phân Loại Nhị Phân Real vs. AI-Generated Faces\\
+         Sử Dụng EfficientNet-B0 và Chiến Lược Fine-Tuning 3 Giai Đoạn}
+
+  \vspace{1cm}
+  \rule{0.6\linewidth}{0.8pt}
+  \vspace{1cm}
+
+  \begin{tabular}{ll}
+    \textbf{Môn học:}   & DS200.F21.CN2 — Khoa học Dữ liệu \\[4pt]
+    \textbf{Trường:}    & Đại học Công nghệ Thông tin, VNU-HCM \\[4pt]
+    \textbf{Nhóm:}      & Nhóm 8 \\[4pt]
+    \textbf{Năm học:}   & 2025 -- 2026 \\
+  \end{tabular}
+
+  \vfill
+  {\small TP. Hồ Chí Minh, tháng 5 năm 2026}
+\end{titlepage}
+
+% ==================== TÓM TẮT ====================
+\chapter*{Tóm Tắt}
+\addcontentsline{toc}{chapter}{Tóm Tắt}
+\input{chapters/abstract}
+
+% ==================== MỤC LỤC ====================
+\tableofcontents
+\clearpage
+
+% ==================== DANH SÁCH BẢNG / HÌNH ====================
+\listoftables
+\addcontentsline{toc}{chapter}{Danh Sách Bảng}
+\listoffigures
+\addcontentsline{toc}{chapter}{Danh Sách Hình}
+\clearpage
+
+% ==================== CÁC CHƯƠNG ====================
+\input{chapters/ch01_gioithieu}
+\input{chapters/ch02_nghiencuulienquan}
+\input{chapters/ch03_bodulieau}
+\input{chapters/ch04_phuongphap}
+\input{chapters/ch05_thucnghiem}
+\input{chapters/ch06_ketluan}
+\input{chapters/ch07_huongphattrien}
+
+% ==================== TÀI LIỆU THAM KHẢO ====================
+\addcontentsline{toc}{chapter}{Tài Liệu Tham Khảo}
+\bibliography{references}
+
+\end{document}

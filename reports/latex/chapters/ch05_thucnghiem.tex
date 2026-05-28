@@ -1,0 +1,231 @@
+\chapter{THỰC NGHIỆM}
+
+\section{Quy Trình Thực Nghiệm}
+
+\subsection{Xử Lý Dữ Liệu}
+
+Quy trình chuẩn bị dữ liệu thực hiện qua hai notebook tuần tự:
+\begin{itemize}
+  \item \textbf{\texttt{00\_download\_datasets.ipynb}:} Tải bốn bộ Kaggle về \texttt{data/raw/}. Idempotent --- bỏ qua các bộ đã tồn tại.
+  \item \textbf{\texttt{01\_dataset\_preparation.ipynb}:} MD5 dedup $\to$ class balance check $\to$ EDA plots $\to$ stratified split 70/15/15 $\to$ xuất CSV.
+\end{itemize}
+
+Kết quả: \textbf{316.530 ảnh} (221.571 train / 47.479 val / 47.480 test), phân bố nhãn đồng đều 47,3\% thật --- 52,7\% giả trên cả ba tập.
+
+\subsection{Chuẩn Bị Dữ Liệu Cho Mô Hình}
+
+\begin{itemize}
+  \item \textbf{Tập train:} resize $224{\times}224$ $\to$ augmentation $\to$ chuẩn hóa ImageNet $\to$ \texttt{torch.Tensor}.
+  \item \textbf{Tập val/test:} resize $224{\times}224$ $\to$ chuẩn hóa ImageNet (không augmentation).
+  \item \textbf{DataLoader:} batch\_size=128, num\_workers=2, pin\_memory=True.
+\end{itemize}
+
+Seed tái lập cố định ở mức 42. Phiên bản ghi nhận khi bắt đầu chạy: PyTorch 2.12.0+cu130, timm 1.0.27, GPU NVIDIA GeForce RTX 5070.
+
+\section{Độ Đo Đánh Giá}
+
+Kết quả cuối cùng được báo cáo chỉ trên tập kiểm tra (47.480 ảnh), tính bằng \texttt{sklearn.metrics}.
+
+\begin{table}[H]
+  \centering
+  \caption{Định nghĩa và ý nghĩa các độ đo đánh giá}
+  \label{tab:metrics_def}
+  \begin{tabularx}{\linewidth}{llX}
+    \toprule
+    \textbf{Độ đo} & \textbf{Công thức} & \textbf{Ý nghĩa trong bài toán} \\
+    \midrule
+    Accuracy  & $\frac{TP+TN}{TP+TN+FP+FN}$ & Tỷ lệ ảnh phân loại đúng tổng thể \\
+    Precision & $\frac{TP}{TP+FP}$ & Trong số ảnh dự đoán là giả, bao nhiêu thực sự là giả \\
+    Recall    & $\frac{TP}{TP+FN}$ & Trong số ảnh giả thực tế, bao nhiêu được phát hiện đúng \\
+    F1-Score  & $\frac{2 \cdot P \cdot R}{P + R}$ & Trung bình điều hòa Precision và Recall \\
+    AUC-ROC   & Diện tích dưới ROC & Khả năng phân biệt Real/Fake ở mọi ngưỡng threshold \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Recall quan trọng hơn Precision vì bỏ sót ảnh giả (False Negative) gây hại thực tế nhiều hơn cảnh báo nhầm. AUC-ROC là độ đo tổng hợp tin cậy nhất vì không phụ thuộc vào ngưỡng phân loại cụ thể. \textit{Positive class} = Fake (1).
+
+\section{Thông Số Chi Tiết Các Giai Đoạn Huấn Luyện}
+
+\begin{table}[H]
+  \centering
+  \caption{Siêu tham số chung cho toàn bộ quá trình huấn luyện}
+  \label{tab:hyperparam}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Tham số} & \textbf{Giá trị} & \textbf{Nguồn} \\
+    \midrule
+    Optimizer          & AdamW \cite{loshchilov2019adamw} & \texttt{train\_config.yaml} \\
+    Weight decay       & $10^{-4}$                        & \texttt{train\_config.yaml} \\
+    Batch size         & 128                              & \texttt{train\_config.yaml} \\
+    Max epochs/stage   & 30                               & \texttt{train\_config.yaml} \\
+    Mixed precision    & FP16 (autocast + GradScaler)     & \texttt{train\_config.yaml} \\
+    EarlyStopping      & patience=5, monitor: val\_loss   & \texttt{train\_config.yaml} \\
+    ReduceLROnPlateau  & patience=3, factor=0,3, min\_lr=$10^{-7}$ & \texttt{train\_config.yaml} \\
+    Random seed        & 42                               & \texttt{train\_config.yaml} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Đánh Giá Thực Nghiệm}
+
+\subsection{Kết Quả Trên Tập Kiểm Tra}
+
+Đánh giá thực hiện trên tập kiểm tra độc lập (47.480 ảnh) với checkpoint tốt nhất của Giai đoạn 3 (\texttt{best\_stage3.pth}, val\_loss=$0{,}0699$).
+
+\begin{table}[H]
+  \centering
+  \caption{Kết quả đánh giá trên tập kiểm tra --- checkpoint Stage 3}
+  \label{tab:test_results}
+  \begin{tabular}{lrr}
+    \toprule
+    \textbf{Độ đo} & \textbf{Giá trị} & \textbf{(\%)} \\
+    \midrule
+    Accuracy  & 0,9733 & 97,33\% \\
+    Precision & 0,9773 & 97,73\% \\
+    Recall    & 0,9718 & 97,18\% \\
+    F1-Score  & 0,9745 & 97,45\% \\
+    AUC-ROC   & 0,9970 & 99,70\% \\
+    \bottomrule
+  \end{tabular}
+  \newline
+  {\small Nguồn: \texttt{artifacts/results/metrics.txt}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{So sánh kết quả qua các giai đoạn trên tập kiểm định}
+  \label{tab:stage_compare}
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Giai đoạn} & \textbf{Val Accuracy} & \textbf{Cải thiện} \\
+    \midrule
+    1 (Head only)       & 86,63\% & --- \\
+    2 (Partial unfreeze) & 94,54\% & $+7{,}91$ pp \\
+    3 (Full fine-tune)  & 97,34\% & $+2{,}80$ pp \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.48\linewidth}
+    \includegraphics[width=\linewidth]{../../artifacts/results/confusion_matrix.png}
+    \caption{Ma trận nhầm lẫn (tập test)}
+    \label{fig:confusion}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.48\linewidth}
+    \includegraphics[width=\linewidth]{../../artifacts/results/roc_curve.png}
+    \caption{Đường cong ROC (AUC = 0,9970)}
+    \label{fig:roc}
+  \end{subfigure}
+  \caption{Kết quả đánh giá trên tập kiểm tra}
+  \label{fig:eval_results}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../../artifacts/results/training_curves.png}
+  \caption{Đường cong val\_loss và val\_accuracy theo epoch của 3 giai đoạn huấn luyện}
+  \label{fig:training_curves}
+\end{figure}
+
+\subsection{Đánh Giá Cross-Generator}
+
+\begin{table}[H]
+  \centering
+  \caption{Kết quả cross-generator evaluation}
+  \label{tab:cross_gen}
+  \begin{tabular}{lrrr}
+    \toprule
+    \textbf{Bộ dữ liệu holdout} & \textbf{Accuracy} & \textbf{F1-Score} & \textbf{AUC-ROC} \\
+    \midrule
+    140k-StyleGAN & [INSERT] & [INSERT] & [INSERT] \\
+    Deepfake-Real & [INSERT] & [INSERT] & [INSERT] \\
+    Hard-FakeReal & [INSERT] & [INSERT] & [INSERT] \\
+    ciplab        & [INSERT] & [INSERT] & [INSERT] \\
+    \bottomrule
+  \end{tabular}
+  \newline
+  {\small Nguồn: \texttt{reports/cross\_generator/} (chưa có kết quả)}
+\end{table}
+
+\subsection{Đánh Giá Robustness}
+
+\begin{table}[H]
+  \centering
+  \caption{Kết quả robustness evaluation}
+  \label{tab:robustness}
+  \begin{tabular}{lrrr}
+    \toprule
+    \textbf{Điều kiện nhiễu} & \textbf{Accuracy} & \textbf{F1-Score} & \textbf{AUC-ROC} \\
+    \midrule
+    Baseline (không nhiễu) & 0,9733 & 0,9745 & 0,9970 \\
+    JPEG nén $q=70$        & [INSERT] & [INSERT] & [INSERT] \\
+    JPEG nén $q=50$        & [INSERT] & [INSERT] & [INSERT] \\
+    JPEG nén $q=30$        & [INSERT] & [INSERT] & [INSERT] \\
+    Downscale 50\%         & [INSERT] & [INSERT] & [INSERT] \\
+    Downscale 25\%         & [INSERT] & [INSERT] & [INSERT] \\
+    Gaussian blur $\sigma=1$ & [INSERT] & [INSERT] & [INSERT] \\
+    Gaussian blur $\sigma=2$ & [INSERT] & [INSERT] & [INSERT] \\
+    \bottomrule
+  \end{tabular}
+  \newline
+  {\small Nguồn: \texttt{reports/robustness/} (chưa có kết quả)}
+\end{table}
+
+\subsection{Nhận Xét}
+
+\subsubsection{Đánh Giá Tổng Quan}
+
+Mô hình EfficientNet-B0 sau Giai đoạn 3 đạt kết quả xuất sắc trên tập kiểm tra chuẩn với Accuracy 97,33\%, F1-Score 97,45\% và AUC-ROC 99,70\%. Val accuracy cải thiện tổng cộng $+10{,}71$ điểm phần trăm từ Giai đoạn 1 đến Giai đoạn 3, xác nhận hiệu quả của chiến lược progressive unfreezing.
+
+\subsubsection{Đánh Giá Theo Từng Độ Đo}
+
+\textbf{Precision (0,9773):} Khi mô hình dự đoán một ảnh là giả, xác suất đúng đạt 97,73\%. Precision cao bác bỏ giả thuyết mô hình thiên vị về lớp đa số (53\% Fake).
+
+\textbf{Recall (0,9718):} Mô hình phát hiện được 97,18\% tổng số ảnh giả thực tế. Khoảng cách nhỏ giữa Precision và Recall ($0{,}55$ pp) cho thấy mô hình không thiên lệch đáng kể về phía nào.
+
+\textbf{AUC-ROC (0,9970):} Gần hoàn hảo --- mô hình có khả năng phân tách xác suất thật/giả rất tốt ở mọi mức ngưỡng.
+
+\subsubsection{Phân Tích Nguyên Nhân Thành Công}
+
+\begin{itemize}
+  \item \textbf{Quy mô dữ liệu đa nguồn:} 316.530 ảnh từ 4 phương pháp sinh buộc mô hình học đặc trưng phổ quát thay vì phụ thuộc vào artifact của một phương pháp cụ thể.
+  \item \textbf{Progressive unfreezing:} Ngăn catastrophic forgetting, cho phép backbone thích nghi dần với domain khuôn mặt.
+  \item \textbf{Mixed precision FP16:} Cho phép batch size 128, cung cấp gradient estimate ổn định hơn.
+  \item \textbf{EarlyStopping không kích hoạt:} Cho thấy 30 epochs là hợp lý --- mô hình chưa overfitting khi kết thúc; tăng thêm epochs có thể cải thiện thêm.
+\end{itemize}
+
+\subsubsection{Trực Quan Hóa Grad-CAM}
+
+[INSERT: kết quả Grad-CAM từ \texttt{artifacts/gradcam/} khi có]
+
+Dựa trên quan sát EDA, kỳ vọng mô hình tập trung vào: vùng tai và hoa tai (artifact StyleGAN2 phổ biến nhất), vùng tiếp giáp tóc--da, và nền ảnh gần mặt.
+
+\section{Ứng Dụng Thực Nghiệm}
+
+\subsection{Pipeline Inference}
+
+\begin{lstlisting}[style=python, caption={Pipeline phân loại ảnh mới}]
+from PIL import Image
+import torch, albumentations as A
+from albumentations.pytorch import ToTensorV2
+
+transform = A.Compose([
+    A.Resize(224, 224),
+    A.Normalize(mean=[0.485,0.456,0.406],
+                std=[0.229,0.224,0.225]),
+    ToTensorV2()
+])
+
+model.eval()
+with torch.no_grad():
+    img = transform(image=np.array(Image.open(path).convert("RGB")))
+    logit = model(img["image"].unsqueeze(0).to(device))
+    prob  = torch.sigmoid(logit).item()
+    label = "Fake" if prob > 0.5 else "Real"
+\end{lstlisting}
+
+Ngưỡng mặc định là $0{,}5$. Trong ứng dụng ưu tiên Recall cao (không bỏ sót ảnh giả), ngưỡng có thể được hạ xuống $0{,}3$--$0{,}4$ dựa trên đường ROC.

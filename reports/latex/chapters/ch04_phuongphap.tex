@@ -1,0 +1,190 @@
+\chapter{PHƯƠNG PHÁP ĐỀ XUẤT}
+
+\section{Mô Hình}
+
+\subsection{EfficientNet-B0 Backbone}
+
+Kiến trúc backbone được chọn là EfficientNet-B0 \cite{tan2019efficientnet}, nạp từ thư viện timm \cite{wightman2019timm} với trọng số tiền huấn luyện trên ImageNet:
+
+\begin{lstlisting}[style=python, caption={Khởi tạo EfficientNet-B0 backbone}]
+import timm
+backbone = timm.create_model(
+    "efficientnet_b0",
+    pretrained=True,
+    num_classes=0,   # loai bo classifier mac dinh
+    global_pool=""   # them pooling rieng
+)
+# output: feature map (B, 1280, 7, 7)
+\end{lstlisting}
+
+EfficientNet được xây dựng trên nguyên tắc \textit{compound scaling} --- scale đồng thời độ sâu (depth), độ rộng (width) và độ phân giải (resolution) theo một hệ số tỷ lệ thống nhất. EfficientNet-B0 --- phiên bản nhỏ nhất --- đạt accuracy tương đương ResNet-50 với $\approx 5{,}3$M tham số (so với $\approx 25{,}6$M), phù hợp fine-tuning trên tập dữ liệu đa domain.
+
+\begin{table}[H]
+  \centering
+  \caption{So sánh kiến trúc backbone}
+  \label{tab:backbone_compare}
+  \begin{tabular}{llrl}
+    \toprule
+    \textbf{Kiến trúc} & \textbf{Tham số} & \textbf{Top-1 Acc. (ImageNet)} & \textbf{Ghi chú} \\
+    \midrule
+    EfficientNet-B0 & $\approx$5,3M & 77,1\% & \textit{Lựa chọn đề tài} \\
+    ResNet-50       & $\approx$25,6M & 76,2\% & $\approx 5\times$ tham số hơn \\
+    VGG-16          & $\approx$138M  & 74,4\% & Quá nặng cho fine-tuning \\
+    ViT-B/16        & $\approx$86M   & 81,8\% & Cần nhiều dữ liệu hơn \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Custom Classification Head}
+
+Sau backbone, một phần đầu phân loại tùy chỉnh được gắn vào:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.55\linewidth}
+    \begin{lstlisting}[style=python, caption={Kiến trúc classification head}]
+nn.Sequential(
+    nn.AdaptiveAvgPool2d(1),  # (B,1280,1,1)
+    nn.Flatten(),              # (B, 1280)
+    nn.Linear(1280, 256),
+    nn.ReLU(inplace=True),
+    nn.Dropout(p=0.5),
+    nn.Linear(256, 1)          # logit
+)
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Thiết kế và lý do từng thành phần trong classification head}
+  \label{tab:head}
+  \begin{tabularx}{\linewidth}{llX}
+    \toprule
+    \textbf{Thành phần} & \textbf{Cấu hình} & \textbf{Lý do thiết kế} \\
+    \midrule
+    AdaptiveAvgPool2d & Output (1,1) & Tổng hợp không gian từ toàn bộ feature map \\
+    Linear (đầu tiên) & $1280 \to 256$ & Đủ rộng để học ranh giới phân loại Real/Fake \\
+    Dropout           & $p = 0{,}5$   & Ngăn overfitting --- artifact dễ bị ``học thuộc'' \\
+    Linear (đầu ra)   & $256 \to 1$   & Một logit cho phân loại nhị phân \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\textbf{Hàm mất mát:} \texttt{BCEWithLogitsLoss} kết hợp sigmoid và binary cross-entropy:
+\begin{equation}
+  \mathcal{L}(x, y) = -\bigl[ y \cdot \log\sigma(x) + (1-y) \cdot \log(1 - \sigma(x)) \bigr]
+  \label{eq:bce}
+\end{equation}
+trong đó $x$ là logit đầu ra, $y \in \{0, 1\}$ là nhãn thật, $\sigma(\cdot)$ là hàm sigmoid. Sigmoid \textbf{không} được áp dụng trước khi tính mất mát --- chỉ áp dụng khi inference.
+
+\subsection{Chiến Lược Huấn Luyện 3 Giai Đoạn}
+
+Chiến lược dựa trên nguyên tắc \textit{discriminative fine-tuning}: các lớp gần đầu vào đã học đặc trưng tốt từ ImageNet nên cần learning rate thấp; các lớp đầu ra mới cần học từ đầu với learning rate cao hơn.
+
+\begin{table}[H]
+  \centering
+  \caption{Thông số chi tiết 3 giai đoạn huấn luyện}
+  \label{tab:stages}
+  \begin{tabularx}{\linewidth}{clXrrl}
+    \toprule
+    \textbf{GĐ} & \textbf{Tên} & \textbf{Lớp trainable} & \textbf{LR} & \textbf{Max E.} & \textbf{Checkpoint} \\
+    \midrule
+    1 & Freeze Backbone   & Head only                   & $10^{-4}$ & 30 & \texttt{best\_stage1.pth} \\
+    2 & Unfreeze Top      & Head + blocks 5--6          & $10^{-5}$ & 30 & \texttt{best\_stage2.pth} \\
+    3 & Unfreeze All      & Toàn bộ mô hình             & $10^{-6}$ & 30 & \texttt{best\_stage3.pth} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Kết quả huấn luyện trên tập kiểm định theo giai đoạn}
+  \label{tab:train_results}
+  \begin{tabular}{clrrrl}
+    \toprule
+    \textbf{GĐ} & \textbf{Epochs chạy} & \textbf{Val Loss} & \textbf{Val Accuracy} & \textbf{Kích thước} \\
+    \midrule
+    1 & 30/30 & 0,3103 & 86,63\% & 20,3 MB \\
+    2 & 30/30 & 0,1383 & 94,54\% & 26,0 MB \\
+    3 & 30/30 & 0,0699 & 97,34\% & 52,5 MB \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Đáng chú ý, EarlyStopping không kích hoạt ở bất kỳ giai đoạn nào --- mô hình tiếp tục cải thiện đến epoch cuối. Val loss giảm liên tục $0{,}310 \to 0{,}138 \to 0{,}070$ ($\approx 77\%$ tổng mức giảm).
+
+\section{Pipeline Tiền Xử Lý và Tăng Cường Dữ Liệu}
+
+\subsection{Tiền Xử Lý Cơ Bản}
+
+Mọi ảnh đầu vào trải qua hai bước cố định:
+\begin{enumerate}
+  \item \textbf{Resize về $224 \times 224$:} Kích thước đầu vào mặc định của EfficientNet-B0. EDA xác nhận hầu hết ảnh đã ở tỷ lệ khung hình $\approx 1{:}1$, không gây biến dạng.
+  \item \textbf{Chuẩn hóa ImageNet:} Mean $= [0{,}485;\ 0{,}456;\ 0{,}406]$, Std $= [0{,}229;\ 0{,}224;\ 0{,}225]$ (kênh R/G/B).
+\end{enumerate}
+
+\subsection{Tăng Cường Dữ Liệu (Train Only)}
+
+\begin{table}[H]
+  \centering
+  \caption{Các phép biến đổi tăng cường dữ liệu (albumentations)}
+  \label{tab:augmentation}
+  \begin{tabularx}{\linewidth}{lXrl}
+    \toprule
+    \textbf{Phép biến đổi} & \textbf{Tham số} & \textbf{$p$} & \textbf{Mục đích} \\
+    \midrule
+    HorizontalFlip & --- & 0,5 & Mô phỏng đối xứng gương \\
+    RandomBrightnessContrast & brightness\_limit=0,2; contrast\_limit=0,2 & 0,5 & Mô phỏng điều kiện ánh sáng \\
+    ShiftScaleRotate & shift=0,1; scale=0,1; rotate=15° & 0,5 & Mô phỏng góc chụp thay đổi \\
+    CoarseDropout & max\_holes=8; kích thước $16{\times}16$~px & 0,3 & Ngăn phụ thuộc đặc trưng cục bộ \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Tập val/test chỉ áp dụng resize và chuẩn hóa --- không augmentation để đảm bảo đánh giá tái lập.
+
+\section{Môi Trường Huấn Luyện và Công Nghệ Sử Dụng}
+
+Mô hình được huấn luyện trong $\approx 17$ giờ trên phần cứng dưới đây.
+
+\begin{table}[H]
+  \centering
+  \caption{Cấu hình phần cứng huấn luyện}
+  \label{tab:hardware}
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Thành phần} & \textbf{Thông số} \\
+    \midrule
+    CPU  & AMD Ryzen 5 7500F 6-Core \\
+    GPU  & NVIDIA GeForce RTX 5070 \\
+    VRAM & 12,82 GB \\
+    Compute Capability & 12.0 (Blackwell) \\
+    CUDA & 13.0 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Các thư viện và phiên bản sử dụng}
+  \label{tab:libraries}
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Loại} & \textbf{Thư viện} & \textbf{Phiên bản} & \textbf{Mục đích} \\
+    \midrule
+    Framework     & PyTorch       & 2.12.0+cu130 & Deep learning \\
+    Model library & timm          & 1.0.27       & EfficientNet-B0 pretrained \\
+    Augmentation  & albumentations & 2.0.8       & Train transform \\
+    Metrics       & scikit-learn  & 1.8.0        & Acc/P/R/F1/AUC-ROC \\
+    Visualization & matplotlib    & $\geq$3.8    & Confusion matrix, ROC curve \\
+    Data          & pandas        & $\geq$2.1    & Đọc và xử lý CSV \\
+    Config        & PyYAML        & ---          & Nạp siêu tham số từ YAML \\
+    Ngôn ngữ      & Python        & 3.12         & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Mixed-precision training (FP16):} Được bật bằng \texttt{torch.cuda.amp.autocast()} kết hợp \texttt{GradScaler}, giảm VRAM $\approx 40\%$ và tăng tốc $\approx 1{,}5$--$2\times$ trên RTX 5070.
+
+\textbf{Tái lập kết quả:} Seed 42 cố định cho \texttt{random}, \texttt{numpy}, \texttt{torch} và \texttt{torch.cuda}; \texttt{deterministic=True}.

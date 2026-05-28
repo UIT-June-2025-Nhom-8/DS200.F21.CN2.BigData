@@ -1,0 +1,64 @@
+\chapter{GIỚI THIỆU ĐỀ TÀI}
+
+\section{Tính Cấp Thiết Của Đề Tài}
+
+Sự phát triển vượt bậc của các mô hình sinh ảnh bằng trí tuệ nhân tạo --- đặc biệt là mạng đối nghịch sinh (Generative Adversarial Network --- GAN) và các mô hình khuếch tán (Diffusion Models) --- đã tạo ra một thách thức nghiêm trọng đối với tính xác thực của hình ảnh số. Từ StyleGAN2 \cite{karras2020stylegan2} tạo ra khuôn mặt người hoàn toàn không tồn tại ngoài đời thực, đến các công cụ deepfake cho phép ghép khuôn mặt vào video với chất lượng ngày càng cao, ranh giới giữa ảnh thật và ảnh giả ngày càng trở nên mờ nhạt.
+
+Hệ quả xã hội của hiện tượng này là rất đáng lo ngại. Ảnh khuôn mặt giả mạo đã được sử dụng trong các chiến dịch thao túng dư luận chính trị, tạo hình đại diện giả mạo cho các tài khoản lừa đảo trên mạng xã hội, và làm vũ khí trong các vụ xâm phạm danh dự cá nhân. Nghiên cứu của Bird \& Lotfi \cite{bird2024cifake} và Yan và cộng sự \cite{yan2025aide} chỉ ra rằng ngay cả những người được đào tạo về kỹ thuật số cũng khó phân biệt khuôn mặt do AI tổng hợp bằng mắt thường, đặc biệt với các mô hình thế hệ mới. Điều này đặt ra nhu cầu cấp bách về các công cụ phát hiện tự động có độ chính xác cao và khả năng tổng quát hóa sang các phương pháp tổng hợp mới.
+
+Thách thức kỹ thuật không kém phần phức tạp. Mỗi phương pháp tổng hợp ảnh để lại các loại artifact khác nhau: StyleGAN2 thường tạo ra artifact tần số cao ở vùng tai và tóc; deepfake dựa trên ghép khuôn mặt thường có vùng biên không tự nhiên; diffusion models tạo ra artifact hoàn toàn khác về cấu trúc tần số. Một mô hình phát hiện huấn luyện chủ yếu trên ảnh StyleGAN có thể đạt accuracy cao trên bộ test cùng phân bố nhưng thất bại khi gặp ảnh từ generator mới --- vấn đề domain generalization được ghi nhận bởi Zhu và cộng sự \cite{zhu2023genimage} và Li và cộng sự \cite{li2020celebdf}.
+
+Trong bối cảnh đó, việc xây dựng một hệ thống phân loại khuôn mặt thật/giả dựa trên học sâu với khả năng tổng quát hóa đa nguồn là mục tiêu có giá trị khoa học và ứng dụng thực tiễn rõ ràng.
+
+\section{Mô Tả Bài Toán}
+
+Đề tài đặt ra bài toán phân loại nhị phân ảnh khuôn mặt:
+
+\begin{itemize}
+  \item \textbf{Đầu vào (Input):} Một ảnh khuôn mặt đơn lẻ định dạng RGB, kích thước bất kỳ (sau bước resize về $224 \times 224$ pixel).
+  \item \textbf{Đầu ra (Output):} Nhãn nhị phân $y \in \{0, 1\}$ với $0 = \text{thật}$ (Real), $1 = \text{giả}$ (Fake) --- kèm theo xác suất tin cậy $p \in [0, 1]$.
+\end{itemize}
+
+Bài toán được định nghĩa chính thức là tìm hàm $f: \mathcal{X} \rightarrow [0,1]$ sao cho $f(\mathbf{x}) > 0{,}5$ khi và chỉ khi ảnh $\mathbf{x}$ là ảnh khuôn mặt do AI tổng hợp, trong đó $\mathcal{X}$ là không gian ảnh RGB $224 \times 224$.
+
+Ràng buộc thực tế quan trọng: mô hình phải hoạt động trên ảnh từ nhiều phương pháp tổng hợp khác nhau (StyleGAN2, manipulation-based, GAN tổng quát, ciplab), không chỉ tối ưu trên một phân bố dữ liệu cụ thể. Các độ đo đánh giá gồm: Accuracy, Precision, Recall, F1-Score và AUC-ROC, tính trên tập kiểm tra độc lập (15\% toàn bộ dữ liệu, 47.480 ảnh).
+
+\section{Đối Tượng và Phạm Vi Nghiên Cứu}
+
+\textbf{Đối tượng nghiên cứu:}
+\begin{itemize}
+  \item Ảnh khuôn mặt người thật và khuôn mặt do AI tổng hợp (GAN, manipulation-based).
+  \item Kiến trúc EfficientNet-B0 \cite{tan2019efficientnet} trong bài toán phân loại ảnh nhị phân với transfer learning.
+  \item Chiến lược fine-tuning 3 giai đoạn (progressive unfreezing) và ảnh hưởng của từng giai đoạn đến hiệu suất.
+  \item Tăng cường dữ liệu (data augmentation) bằng albumentations \cite{buslaev2020albumentations} và vai trò của nó trong khả năng tổng quát hóa.
+\end{itemize}
+
+\textbf{Phạm vi nghiên cứu:}
+\begin{itemize}
+  \item \textit{Dữ liệu:} Bốn bộ Kaggle (140k-StyleGAN, Deepfake-Real, Hard-FakeReal, ciplab). Tổng 316.530 ảnh sau dedup, phân chia stratified 70/15/15.
+  \item \textit{Phương pháp:} Transfer learning từ EfficientNet-B0 pretrained trên ImageNet, huấn luyện 3 giai đoạn với mixed-precision FP16.
+  \item \textit{Đánh giá:} Test set chuẩn + cross-generator test + robustness test (JPEG compression, downscale, Gaussian blur) + Grad-CAM explainability.
+  \item \textit{Không trong phạm vi:} Video deepfake, audio deepfake, real-time detection, ảnh từ diffusion models thế hệ mới (Stable Diffusion, Midjourney).
+\end{itemize}
+
+\section{Mục Tiêu Đề Tài}
+
+Đề tài đặt ra tám mục tiêu cụ thể và đo lường được:
+
+\begin{enumerate}
+  \item \textbf{Xây dựng pipeline dữ liệu:} Thu thập và hợp nhất bốn bộ Kaggle, loại bỏ trùng lặp MD5, tạo file phân chia \texttt{train.csv}, \texttt{val.csv}, \texttt{test.csv} theo tỷ lệ 70/15/15 stratified.
+
+  \item \textbf{Thực hiện EDA toàn diện:} Phân tích phân bố lớp theo nguồn, phân bố độ phân giải, thống kê pixel R/G/B, phân tích phổ FFT để xác định đặc trưng phân biệt thật/giả.
+
+  \item \textbf{Xây dựng pipeline tiền xử lý:} Chuẩn hóa resize $224 \times 224$, normalize ImageNet, augmentation tách biệt train/val; đảm bảo tái lập đầy đủ qua seed 42.
+
+  \item \textbf{Huấn luyện EfficientNet-B0 theo 3 giai đoạn:} Head-only ($\text{LR}=10^{-4}$) $\to$ partial unfreeze blocks 5--6 ($\text{LR}=10^{-5}$) $\to$ full fine-tune ($\text{LR}=10^{-6}$); lưu checkpoint tốt nhất theo val\_loss mỗi giai đoạn.
+
+  \item \textbf{Đánh giá trên test set chuẩn:} Bảng Accuracy/Precision/Recall/F1/AUC-ROC; confusion matrix và ROC curve; mục tiêu AUC-ROC $\geq 0{,}95$.
+
+  \item \textbf{Cross-generator evaluation:} Huấn luyện trên 3 bộ, đánh giá trên bộ còn lại (hold-out), lặp lại cho cả 4 bộ; ghi nhận mức độ suy giảm hiệu suất.
+
+  \item \textbf{Robustness evaluation:} Đánh giá với JPEG compression ($q = 70/50/30$), downscale (50\%/25\%), Gaussian blur ($\sigma = 1/2$); vẽ biểu đồ đường accuracy vs.\ mức nhiễu.
+
+  \item \textbf{Grad-CAM explainability:} Trực quan hóa vùng ảnh mô hình tập trung khi phân loại; phân tích tương quan với artifact quan sát được trong EDA.
+\end{enumerate}
