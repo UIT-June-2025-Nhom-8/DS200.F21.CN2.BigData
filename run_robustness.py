@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import torch
 from PIL import Image, ImageFilter
-from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from torch.utils.data import DataLoader, Dataset
 import timm
 import albumentations as A
@@ -130,7 +130,8 @@ robustness_results = {}
 for name, perturb_fn in PERTURBATIONS.items():
     print(f"\n[{name}] evaluating...", flush=True)
     dataset = RobustnessDataset(test_df, perturb_fn, val_transform)
-    loader = DataLoader(dataset, batch_size=BATCH_SIZE, num_workers=0, pin_memory=False)
+    loader = DataLoader(dataset, batch_size=BATCH_SIZE,
+                        num_workers=4, pin_memory=torch.cuda.is_available())
 
     all_preds, all_probs, all_labels = [], [], []
     model.eval()
@@ -149,12 +150,16 @@ for name, perturb_fn in PERTURBATIONS.items():
     p = np.array(all_preds)
     prob = np.array(all_probs)
     robustness_results[name] = {
-        "accuracy": float(accuracy_score(y, p)),
-        "auc": float(roc_auc_score(y, prob)),
+        "accuracy":  float(accuracy_score(y, p)),
+        "precision": float(precision_score(y, p, zero_division=0)),
+        "recall":    float(recall_score(y, p, zero_division=0)),
+        "f1":        float(f1_score(y, p, zero_division=0)),
+        "auc":       float(roc_auc_score(y, prob)),
     }
+    m = robustness_results[name]
     print(
-        f"  Accuracy={robustness_results[name]['accuracy']:.4f}  "
-        f"AUC={robustness_results[name]['auc']:.4f}",
+        f"  Accuracy={m['accuracy']:.4f}  Precision={m['precision']:.4f}  "
+        f"Recall={m['recall']:.4f}  F1={m['f1']:.4f}  AUC={m['auc']:.4f}",
         flush=True,
     )
 

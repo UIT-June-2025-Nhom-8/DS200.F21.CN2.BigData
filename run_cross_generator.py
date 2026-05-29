@@ -25,6 +25,7 @@ from sklearn.metrics import (
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import random
 
 # --- Reproducibility ---
@@ -168,8 +169,8 @@ for key in DATASET_KEYS:
     loader = DataLoader(
         FaceDataset(subset, val_transform),
         batch_size=BATCH_SIZE,
-        num_workers=0,
-        pin_memory=False,
+        num_workers=4,
+        pin_memory=torch.cuda.is_available(),
     )
     metrics = evaluate(model, loader, DEVICE)
     results[key] = metrics
@@ -220,14 +221,15 @@ plt.close(fig)
 print("Saved ROC curve")
 
 # Bar chart
-metrics_to_plot = ["accuracy", "f1", "auc"]
-fig, axes = plt.subplots(1, 3, figsize=(14, 5))
+metrics_to_plot = ["accuracy", "precision", "recall", "f1", "auc"]
+fig, axes = plt.subplots(1, 5, figsize=(22, 5))
 colors = ["#4C9BE8", "#E87C4C", "#4CE87C", "#E84C9B"]
 for ax, metric in zip(axes, metrics_to_plot):
     vals = [summary[k][metric] for k in summary]
     keys = list(summary.keys())
     bars = ax.bar(keys, vals, color=colors[: len(keys)])
-    ax.set_ylim(0.5, 1.05)
+    ax.set_ylim(0, 1.05)
+    ax.axhline(0.5, color="red", linestyle=":", linewidth=1, label="Random baseline")
     ax.set_title(metric.upper())
     ax.set_ylabel(metric)
     ax.tick_params(axis="x", rotation=15)
@@ -238,26 +240,50 @@ for ax, metric in zip(axes, metrics_to_plot):
             f"{val:.3f}",
             ha="center", va="bottom", fontsize=9,
         )
+axes[0].legend(fontsize=8)
 fig.suptitle("So sánh Metric theo Dataset — Cross-Generator Test", fontsize=13)
 fig.tight_layout()
 fig.savefig(f"{OUTPUT_DIR}/metrics_comparison.png", dpi=150, bbox_inches="tight")
 plt.close(fig)
 print("Saved metrics comparison")
 
-# Table PNG
-fig2, ax2 = plt.subplots(figsize=(10, 3))
-ax2.axis("off")
-tbl = ax2.table(
-    cellText=df_summary.round(4).values,
-    colLabels=df_summary.columns,
-    cellLoc="center",
-    loc="center",
+# Table PNG — dùng plotly để có màu gradient rõ ràng hơn
+metric_cols = ["accuracy", "precision", "recall", "f1", "auc"]
+fill_colors = [
+    ["#4C9BE8"] + ["#ffffff"] * len(df_summary)
+]
+cell_fills = []
+for col in df_summary.columns:
+    if col == "dataset":
+        cell_fills.append(["#f0f0f0"] * len(df_summary))
+    else:
+        cell_fills.append(
+            ["#ffcccc" if v < 0.7 else "#fff3cc" if v < 0.85 else "#ccffcc"
+             for v in df_summary[col]]
+        )
+fig_tbl = go.Figure(data=[go.Table(
+    header=dict(
+        values=list(df_summary.columns),
+        fill_color="#4C9BE8",
+        font=dict(color="white", size=12),
+        align="center",
+    ),
+    cells=dict(
+        values=[
+            df_summary[c].round(4).tolist() if c != "dataset" else df_summary[c].tolist()
+            for c in df_summary.columns
+        ],
+        fill_color=cell_fills,
+        align="center",
+        font=dict(size=11),
+    ),
+)])
+fig_tbl.update_layout(
+    title="Kết quả Cross-Generator Test",
+    margin=dict(l=10, r=10, t=40, b=10),
 )
-tbl.auto_set_font_size(False)
-tbl.set_fontsize(9)
-fig2.tight_layout()
-fig2.savefig(f"{OUTPUT_DIR}/cross_generator_table.png", dpi=150, bbox_inches="tight")
-plt.close(fig2)
+fig_tbl.write_image(f"{OUTPUT_DIR}/cross_generator_table.png", width=900, height=200, scale=2)
+print("Saved cross_generator_table.png")
 
 print(f"\nTất cả kết quả đã lưu vào: {OUTPUT_DIR}")
 print("\n=== TÓM TẮT ===")

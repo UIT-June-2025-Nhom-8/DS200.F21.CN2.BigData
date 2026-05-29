@@ -30,7 +30,7 @@
 ## 1. Kiểm thử 1 — Cross-Generator
 
 **Notebook:** `notebooks/03_cross_generator_test.ipynb`
-**Kết quả lưu tại:** `reports/../reports/cross_generator/`
+**Kết quả lưu tại:** `reports/cross_generator/`
 
 ### 1.1 Mục đích và phạm vi
 
@@ -179,7 +179,9 @@ Do mô hình được huấn luyện trên phần train/val từ cả 4 nguồn 
 ## 2. Kiểm thử 2 — Robustness
 
 **Notebook:** `notebooks/04-robustness-test-kaggle.ipynb` *(chạy trên Kaggle GPU Tesla T4)*
-**Kết quả lưu tại:** `reports/../reports/robustness/`
+**Kết quả lưu tại:** `reports/robustness/`
+
+> **Lưu ý về notebook:** File `notebooks/04_robustness_test.ipynb` là phiên bản local dùng để tham khảo cấu trúc code — **không có output** do thiếu GPU và dữ liệu local. Toàn bộ kết quả thực nghiệm được lấy từ `notebooks/04-robustness-test-kaggle.ipynb` chạy trên Kaggle GPU Tesla T4.
 
 ### 2.1 Mục đích và phạm vi
 
@@ -302,7 +304,3 @@ Về độ bền trước biến đổi ảnh: **không một perturbation nào 
 3. Xem xét thực nghiệm LODO thực sự (retrain 4 lần) để đo generalization chuẩn xác hơn
 
 
----
-
-> **Ghi chú kỹ thuật — Lỗi label encoding trong Kaggle notebook:**
-> Notebook `04-robustness-test-kaggle.ipynb` sử dụng mapping `{"Real": 1, "Fake": 0}` — ngược với mapping huấn luyện `{"Real": 0, "Fake": 1}`. Do đó, JSON gốc từ Kaggle báo cáo Accuracy ≈ 1 − Acc_thực và AUC ≈ 1 − AUC_thực (ví dụ: baseline raw = 0.027, thực = 0.9733). File `tests/../reports/robustness/robustness_metrics.json` đã được hiệu chỉnh với công thức `acc_corrected = 1 − acc_raw`, `auc_corrected = 1 − auc_raw`. Cần sửa mapping trong notebook trước khi tái sử dụng.
