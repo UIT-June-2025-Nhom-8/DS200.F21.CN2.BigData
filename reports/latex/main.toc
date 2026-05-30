@@ -1,0 +1,60 @@
+\xpg@aux {}{vietnamese}
+\contentsline {chapter}{Tóm Tắt}{1}{chapter*.1}%
+\contentsline {chapter}{Danh Sách Bảng}{3}{chapter*.1}%
+\contentsline {chapter}{Danh Sách Hình}{3}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}GIỚI THIỆU ĐỀ TÀI}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Tính Cấp Thiết Của Đề Tài}{4}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Mô Tả Bài Toán}{4}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Đối Tượng và Phạm Vi Nghiên Cứu}{5}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Mục Tiêu Đề Tài}{5}{section.1.4}%
+\contentsline {chapter}{\numberline {2}NGHIÊN CỨU LIÊN QUAN}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Các Nghiên Cứu Về Phát Hiện Khuôn Mặt Giả Mạo}{6}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Các Nghiên Cứu Về Tổng Hợp Khuôn Mặt Bằng AI}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Các Nghiên Cứu Về EfficientNet và Transfer Learning}{7}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Điểm Mới Của Đề Tài}{7}{section.2.4}%
+\contentsline {chapter}{\numberline {3}BỘ DỮ LIỆU}{8}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Giới Thiệu và Thu Thập}{8}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Mô Tả Các Nguồn Dữ Liệu}{8}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Quy Trình Hợp Nhất và Tiền Xử Lý}{8}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}Thống Kê Tập Dữ Liệu Sau Hợp Nhất}{9}{subsection.3.1.3}%
+\contentsline {section}{\numberline {3.2}Quy Trình Khai Phá Dữ Liệu (EDA)}{9}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Phân Bố Lớp Theo Nguồn Dữ Liệu}{9}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Phân Bố Độ Phân Giải}{10}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Phân Tích Thuộc Tính Pixel}{10}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Phân Tích Mẫu Đại Diện}{11}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Phân Tích Phổ Tần Số (FFT)}{11}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}Kiểm Tra Tính Toàn Vẹn Dữ Liệu}{12}{subsection.3.2.6}%
+\contentsline {section}{\numberline {3.3}Nhận Xét Chất Lượng Bộ Dữ Liệu}{12}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Kích Thước và Cấu Trúc}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Thách Thức Kỹ Thuật}{12}{subsection.3.3.2}%
+\contentsline {chapter}{\numberline {4}PHƯƠNG PHÁP ĐỀ XUẤT}{13}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Mô Hình}{13}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}EfficientNet-B0 Backbone}{13}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Custom Classification Head}{13}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Chiến Lược Huấn Luyện 3 Giai Đoạn}{14}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Pipeline Tiền Xử Lý và Tăng Cường Dữ Liệu}{15}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Tiền Xử Lý Cơ Bản}{15}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Tăng Cường Dữ Liệu (Train Only)}{15}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Môi Trường Huấn Luyện và Công Nghệ Sử Dụng}{15}{section.4.3}%
+\contentsline {chapter}{\numberline {5}THỰC NGHIỆM}{17}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Quy Trình Thực Nghiệm}{17}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Xử Lý Dữ Liệu}{17}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Chuẩn Bị Dữ Liệu Cho Mô Hình}{17}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}Độ Đo Đánh Giá}{17}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Thông Số Chi Tiết Các Giai Đoạn Huấn Luyện}{18}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Đánh Giá Thực Nghiệm}{18}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Kết Quả Trên Tập Kiểm Tra}{18}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Đánh Giá Cross-Generator}{19}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Đánh Giá Robustness}{20}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.4}Nhận Xét}{20}{subsection.5.4.4}%
+\contentsline {subsubsection}{Đánh Giá Tổng Quan}{20}{subsection.5.4.4}%
+\contentsline {subsubsection}{Đánh Giá Theo Từng Độ Đo}{20}{subsection.5.4.4}%
+\contentsline {subsubsection}{Phân Tích Nguyên Nhân Thành Công}{20}{subsection.5.4.4}%
+\contentsline {subsubsection}{Trực Quan Hóa Grad-CAM}{21}{subsection.5.4.4}%
+\contentsline {section}{\numberline {5.5}Ứng Dụng Thực Nghiệm}{21}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Pipeline Inference}{21}{subsection.5.5.1}%
+\contentsline {chapter}{\numberline {6}KẾT LUẬN}{23}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Tóm Tắt Đề Tài}{23}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Đóng Góp Của Đề Tài}{23}{section.6.2}%
+\contentsline {chapter}{\numberline {7}HƯỚNG PHÁT TRIỂN ĐỀ TÀI}{24}{chapter.7}%
+\contentsline {chapter}{Tài Liệu Tham Khảo}{24}{Item.24}%

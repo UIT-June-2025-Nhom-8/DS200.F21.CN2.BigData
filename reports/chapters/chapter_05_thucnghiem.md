@@ -236,7 +236,7 @@ Kết quả robustness chỉ ra hướng cải thiện rõ ràng: bổ sung `alb
 - **EarlyStopping không kích hoạt ở cả ba stage:** Là tín hiệu tích cực nhưng cũng gợi ý mô hình có thể đạt kết quả tốt hơn nếu tăng số epoch hoặc điều chỉnh lịch học (learning rate schedule).
 - **Sụp đổ hoàn toàn trên ciplab (holdout):** Mức AUC 53,44% cho thấy ciplab GAN tạo ra phân bố hoàn toàn nằm ngoài vùng đặc trưng đã học — giải pháp không phải fine-tuning mà là bổ sung ảnh ciplab vào tập huấn luyện hoặc áp dụng domain adaptation.
 - **Nhạy cảm với nén JPEG:** Suy giảm ~15 pp ngay tại q=70 là đáng lo ngại cho triển khai thực tế trên ảnh chia sẻ qua mạng xã hội — cần thêm compression augmentation trong training.
-- **Chưa có kết quả Grad-CAM:** Chưa thể xác nhận trực quan mô hình tập trung vào artifact đúng vùng (tai, tóc, biên khuôn mặt) hay học các đặc trưng không bền vững.
+- **Grad-CAM ciplab:** Heatmap phân tán trên ảnh ciplab xác nhận mô hình không học được đặc trưng artifact của nguồn này — cần bổ sung ảnh ciplab vào tập huấn luyện hoặc áp dụng domain adaptation.
 
 ---
 
@@ -260,16 +260,36 @@ Ngưỡng mặc định là 0,5. Trong ứng dụng thực tế với yêu cầu
 
 ### 5.5.2 Script Demo
 
-Script `scripts/run_evaluate.py` hỗ trợ đánh giá checkpoint riêng lẻ trên tập test. [INSERT: mô tả script demo.py nếu đã implement — giao diện dòng lệnh, đầu vào/đầu ra, ví dụ chạy]
+Hai script inference đã được triển khai:
+
+- **`scripts/predict.py`** — Phân loại một ảnh đơn lẻ qua dòng lệnh:
+  ```bash
+  python scripts/predict.py <đường_dẫn_ảnh> --checkpoint artifacts/checkpoints/best_stage3.pth
+  # Output: Prediction: Fake | Confidence: 97.82%
+  ```
+- **`scripts/run_gradcam.py`** — Sinh Grad-CAM overlay cho mẫu ảnh từ tất cả nguồn:
+  ```bash
+  python scripts/run_gradcam.py --n_per_class 4
+  # Output: 32 overlay + gradcam_grid.png → artifacts/gradcam/
+  ```
 
 ### 5.5.3 Grad-CAM — Trực Quan Hóa Vùng Quyết Định
 
-[INSERT: kết quả Grad-CAM từ `artifacts/gradcam/` khi có]
+Grad-CAM (Gradient-weighted Class Activation Mapping) tạo ra bản đồ nhiệt (heatmap) làm nổi bật các vùng ảnh đóng góp nhiều nhất vào quyết định của mô hình, bằng cách tính trung bình có trọng số của gradient theo từng kênh đặc trưng tại lớp cuối cùng của backbone. Thực nghiệm được thực hiện trên 32 ảnh mẫu (4 Real + 4 Fake × 4 nguồn), sử dụng checkpoint Stage 3, chạy trên Apple Silicon M1 qua MPS backend.
 
-Grad-CAM (Gradient-weighted Class Activation Mapping) tạo ra bản đồ nhiệt (heatmap) làm nổi bật các vùng ảnh đóng góp nhiều nhất vào quyết định của mô hình. Dựa trên quan sát EDA (Phần 3.2.3), kỳ vọng mô hình tập trung vào các vùng:
-- Vùng tai và hoa tai — nơi StyleGAN2 thường để lại artifact rõ nhất.
-- Vùng tiếp giáp tóc–da — ranh giới khó tổng hợp tự nhiên.
-- Nền ảnh gần mặt — thường bị biến dạng trong quá trình ghép khuôn mặt (manipulation-based).
+**Kết quả trên 32 ảnh mẫu:** 30/32 dự đoán đúng (93,8%). Hai ảnh sai đều thuộc bộ ciplab — nhất quán với kết quả cross-generator (AUC 53,44%) cho thấy mô hình gần như không tổng quát hóa được sang ciplab khi không có nguồn này trong tập huấn luyện.
 
-> **Hình 5.5** — Ví dụ Grad-CAM overlay: ảnh thật (trái) và ảnh giả (phải)  
-> Nguồn: `artifacts/gradcam/` [INSERT khi có]
+**Quan sát vùng kích hoạt theo nguồn:**
+
+- **140k-StyleGAN:** Mô hình tập trung vào vùng trung tâm khuôn mặt (mắt, sống mũi, miệng) với activation tập trung và rõ ràng — cả ảnh thật lẫn giả. Đối với ảnh giả StyleGAN2, heatmap thường kéo dài sang vùng biên tóc–da nơi artifact tần số cao xuất hiện. Tất cả 8/8 dự đoán đúng.
+
+- **Deepfake-Real:** Activation phân bổ rộng hơn trên toàn khuôn mặt, đặc biệt ở vùng mắt và khu vực tiếp giáp giữa khuôn mặt ghép và da gốc — đúng với cơ chế tạo artifact của manipulation-based deepfake. Tất cả 8/8 dự đoán đúng.
+
+- **Hard-FakeReal:** Heatmap tập trung chủ yếu vào vùng mũi và miệng — vùng khó tổng hợp tự nhiên nhất trong các GAN bậc cao. Dù bộ này được thiết kế để khó phân biệt, mô hình vẫn đạt 8/8 đúng trên mẫu này.
+
+- **ciplab:** Activation kém tập trung hơn, thường lan ra vùng nền hoặc cổ — dấu hiệu mô hình không tìm được vùng artifact đặc trưng. Hai ảnh sai (tiêu đề đỏ trong grid) có heatmap phân tán toàn ảnh, xác nhận mô hình thiếu tín hiệu phân biệt rõ ràng với ảnh ciplab.
+
+**Kết luận chung:** Mô hình học được chiến lược phát hiện dựa trên các vùng khuôn mặt có ngữ nghĩa (mắt, mũi, biên tóc–da), không phải các đặc trưng nền hoặc màu sắc toàn cục — đây là tín hiệu tích cực về tính tin cậy của mô hình. Tuy nhiên, sự kém tập trung trên ảnh ciplab cho thấy giới hạn trong việc tổng quát hóa khi artifact không nằm ở các vùng quen thuộc.
+
+> **Hình 5.5** — Grid Grad-CAM overlay 32 ảnh mẫu (4 nguồn × 4 Real + 4 Fake). Tiêu đề xanh = dự đoán đúng, đỏ = sai.  
+> Nguồn: `artifacts/gradcam/gradcam_grid.png`

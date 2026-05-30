@@ -1,0 +1,15 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố số lượng ảnh thật và giả theo từng nguồn dữ liệu}}{9}{figure.caption.4}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố độ phân giải và tỷ lệ khung hình của tập dữ liệu}}{10}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces \xpg@aux {}{vietnamese}Thống kê cường độ pixel R/G/B theo nguồn dữ liệu}}{10}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces \xpg@aux {}{vietnamese}Lưới ảnh mẫu: ảnh thật (viền xanh lá) và ảnh giả (viền đỏ) theo từng nguồn}}{11}{figure.caption.8}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{vietnamese}Phân tích phổ FFT: phổ trung bình của ảnh thật (trái), ảnh giả (giữa) và hiệu phổ (phải)}}{11}{figure.caption.9}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả đánh giá trên tập kiểm tra}}{19}{figure.caption.22}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{vietnamese}Đường cong val\_loss và val\_accuracy theo epoch của 3 giai đoạn huấn luyện}}{19}{figure.caption.23}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{vietnamese}Grid Grad-CAM overlay 32 ảnh mẫu (4 nguồn $\times $ 4 Real + 4 Fake). Tiêu đề xanh lá = dự đoán đúng, đỏ = sai.}}{21}{figure.caption.26}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
