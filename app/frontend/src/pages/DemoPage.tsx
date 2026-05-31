@@ -69,6 +69,14 @@ const features = [
   },
 ]
 
+const members = [
+  { mssv: '25410056', name: 'Lã Xuân Hồng' },
+  { mssv: '25410150', name: 'Nguyễn Minh Trọng' },
+  { mssv: '25410034', name: 'Lê Quang Hoài Đức' },
+  { mssv: '25410104', name: 'Nguyễn Minh Nhật' },
+  { mssv: '25410088', name: 'Trần Thanh Long' },
+]
+
 const archSteps = [
   { num: '01', name: 'Ảnh đầu vào',    detail: 'Resize 224×224\nImageNet normalize' },
   { num: '02', name: 'EfficientNet-B0', detail: 'Backbone frozen\nFeature extraction' },
@@ -169,6 +177,46 @@ export function DemoPage() {
                   →
                 </div>
               )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Team members */}
+      <section className="max-w-6xl mx-auto px-6 py-16 border-t border-[var(--border)]">
+        <div className="flex items-center gap-2 font-mono text-[11px] text-[var(--cyan)] tracking-[0.15em] uppercase mb-3">
+          <span className="w-4 h-px bg-[var(--cyan)]" />
+          Nhóm thực hiện
+        </div>
+        <h2 className="font-display text-2xl lg:text-3xl font-bold mb-10">Thành viên nhóm 8</h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {members.map((m, i) => (
+            <div
+              key={m.mssv}
+              className="relative bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-6
+                hover:border-[var(--border-glow)] hover:bg-[var(--bg-card)] hover:-translate-y-0.5
+                transition-all duration-200 overflow-hidden group"
+            >
+              <div
+                className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ background: 'linear-gradient(90deg, transparent, var(--cyan), transparent)' }}
+              />
+
+              {/* Avatar placeholder */}
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center mb-4 font-display text-[15px] font-bold"
+                style={{
+                  background: `hsl(${(i * 67 + 190) % 360}, 60%, 12%)`,
+                  border: `1px solid hsl(${(i * 67 + 190) % 360}, 60%, 30%)`,
+                  color: `hsl(${(i * 67 + 190) % 360}, 80%, 65%)`,
+                }}
+              >
+                {m.name.split(' ').pop()![0]}
+              </div>
+
+              <p className="font-display text-[14px] font-semibold text-[var(--text-1)] mb-1">{m.name}</p>
+              <p className="font-mono text-[10px] text-[var(--cyan-dim)] tracking-widest">{m.mssv}</p>
             </div>
           ))}
         </div>
