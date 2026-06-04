@@ -1,23 +1,29 @@
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {1.1}{\ignorespaces \xpg@aux {}{vietnamese}Các mốc quan trọng về deepfake và ảnh AI-generated (2020--2025)}}{8}{table.caption.2}%
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces \xpg@aux {}{vietnamese}So sánh các nghiên cứu liên quan theo tiêu chí đánh giá}}{10}{table.caption.3}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{vietnamese}Các bộ dữ liệu sử dụng trong nghiên cứu}}{8}{table.caption.2}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces \xpg@aux {}{vietnamese}Thống kê phân bố dữ liệu sau split}}{9}{table.caption.3}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố dữ liệu theo nguồn}}{9}{table.caption.5}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{vietnamese}Các bộ dữ liệu sử dụng trong nghiên cứu}}{12}{table.caption.4}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces \xpg@aux {}{vietnamese}Thống kê phân bố dữ liệu sau split}}{13}{table.caption.6}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố dữ liệu theo nguồn}}{14}{table.caption.8}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{vietnamese}So sánh kiến trúc backbone}}{13}{table.caption.10}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces \xpg@aux {}{vietnamese}Thiết kế và lý do từng thành phần trong classification head}}{14}{table.caption.12}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces \xpg@aux {}{vietnamese}Thông số chi tiết 3 giai đoạn huấn luyện}}{14}{table.caption.13}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả huấn luyện trên tập kiểm định theo giai đoạn}}{15}{table.caption.14}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces \xpg@aux {}{vietnamese}Các phép biến đổi tăng cường dữ liệu (albumentations)}}{15}{table.caption.15}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces \xpg@aux {}{vietnamese}Cấu hình phần cứng huấn luyện}}{16}{table.caption.16}%
-\contentsline {table}{\numberline {4.7}{\ignorespaces \xpg@aux {}{vietnamese}Các thư viện và phiên bản sử dụng}}{16}{table.caption.17}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{vietnamese}So sánh kiến trúc backbone}}{17}{table.caption.13}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces \xpg@aux {}{vietnamese}Thiết kế và lý do từng thành phần trong classification head}}{18}{table.caption.15}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces \xpg@aux {}{vietnamese}Thông số chi tiết 3 giai đoạn huấn luyện}}{19}{table.caption.17}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả huấn luyện trên tập kiểm định theo giai đoạn}}{19}{table.caption.18}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces \xpg@aux {}{vietnamese}Các phép biến đổi tăng cường dữ liệu (albumentations)}}{20}{table.caption.20}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces \xpg@aux {}{vietnamese}Cấu hình phần cứng huấn luyện}}{21}{table.caption.21}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces \xpg@aux {}{vietnamese}Các thư viện và phiên bản sử dụng}}{21}{table.caption.22}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces \xpg@aux {}{vietnamese}Cấu hình DataLoader cho ba tập dữ liệu}}{22}{table.caption.23}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{vietnamese}Định nghĩa và ý nghĩa các độ đo đánh giá}}{17}{table.caption.18}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{vietnamese}Siêu tham số chung cho toàn bộ quá trình huấn luyện}}{18}{table.caption.19}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả đánh giá trên tập kiểm tra --- checkpoint Stage 3}}{18}{table.caption.20}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces \xpg@aux {}{vietnamese}So sánh kết quả qua các giai đoạn trên tập kiểm định}}{18}{table.caption.21}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả cross-generator evaluation}}{19}{table.caption.24}%
-\contentsline {table}{\numberline {5.6}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả robustness evaluation}}{20}{table.caption.25}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{vietnamese}Định nghĩa và ý nghĩa các độ đo đánh giá}}{23}{table.caption.24}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{vietnamese}Siêu tham số chung cho toàn bộ quá trình huấn luyện}}{24}{table.caption.25}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả đánh giá trên tập kiểm tra --- checkpoint Stage 3}}{24}{table.caption.26}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces \xpg@aux {}{vietnamese}So sánh kết quả qua các giai đoạn trên tập kiểm định}}{24}{table.caption.27}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả cross-generator evaluation đầy đủ (5 độ đo)}}{26}{table.caption.31}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả robustness evaluation}}{26}{table.caption.32}%
+\contentsline {table}{\numberline {5.7}{\ignorespaces \xpg@aux {}{vietnamese}Tóm tắt phân tích lỗi theo điều kiện}}{29}{table.caption.34}%
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces \xpg@aux {}{vietnamese}Bài học kinh nghiệm từ quá trình thực hiện đề tài}}{32}{table.caption.36}%
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces \xpg@aux {}{vietnamese}Các kiến trúc backbone tiềm năng cho nghiên cứu tiếp theo}}{33}{table.caption.37}%

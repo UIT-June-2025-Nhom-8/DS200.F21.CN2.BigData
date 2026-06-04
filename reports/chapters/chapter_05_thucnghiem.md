@@ -146,7 +146,31 @@ Mỗi giai đoạn mở băng thêm đều đóng góp cải thiện đáng kể
 
 ---
 
-### 5.4.2 Đánh Giá Cross-Generator
+### 5.4.2 Sơ Đồ Quy Trình Cross-Generator Evaluation
+
+Mỗi lần chạy hold-out một bộ dữ liệu, huấn luyện trên ba bộ còn lại, rồi đánh giá:
+
+```mermaid
+flowchart LR
+    subgraph Lan1["Lan 1: Holdout StyleGAN"]
+        D1A["Deepfake + HardFake + ciplab"] --> M1["Mo hinh 1"]
+        M1 --> E1["Holdout StyleGAN\nAcc=99.04%\nAUC=99.95%"]
+    end
+    subgraph Lan2["Lan 2: Holdout Deepfake"]
+        D2A["StyleGAN + HardFake + ciplab"] --> M2["Mo hinh 2"]
+        M2 --> E2["Holdout Deepfake\nAcc=96.50%\nAUC=99.55%"]
+    end
+    subgraph Lan3["Lan 3: Holdout HardFake"]
+        D3A["StyleGAN + Deepfake + ciplab"] --> M3["Mo hinh 3"]
+        M3 --> E3["Holdout HardFake\nAcc=90.77%\nAUC=97.07%"]
+    end
+    subgraph Lan4["Lan 4: Holdout ciplab"]
+        D4A["StyleGAN + Deepfake + HardFake"] --> M4["Mo hinh 4"]
+        M4 --> E4["Holdout ciplab\nAcc=53.36%\nAUC=53.44%"]
+    end
+```
+
+### 5.4.3 Bảng Kết Quả Cross-Generator
 
 Bài kiểm tra cross-generator đánh giá khả năng tổng quát hóa của mô hình: huấn luyện trên ba bộ dữ liệu, đánh giá trên bộ còn lại chưa từng thấy trong quá trình huấn luyện.
 
@@ -163,7 +187,7 @@ Nguồn: `reports/cross_generator/cross_generator_metrics.json`.
 
 ---
 
-### 5.4.3 Đánh Giá Robustness
+### 5.4.4 Đánh Giá Robustness
 
 Bài kiểm tra robustness đánh giá độ bền của mô hình trước các biến dạng ảnh thường gặp trong thực tế: nén JPEG (mất thông tin khi chia sẻ qua mạng xã hội), downscale (ảnh độ phân giải thấp), và Gaussian blur (ảnh chụp không nét).
 
@@ -187,7 +211,7 @@ Nguồn: `reports/robustness/robustness_metrics.json`.
 
 ---
 
-### 5.4.4 Nhận Xét
+### 5.4.5 Nhận Xét
 
 #### Đánh Giá Tổng Quan
 
@@ -258,7 +282,21 @@ Quá trình phân loại một ảnh mới được thực hiện theo pipeline:
 
 Ngưỡng mặc định là 0,5. Trong ứng dụng thực tế với yêu cầu Recall cao hơn (ưu tiên không bỏ sót ảnh giả), ngưỡng có thể được hạ xuống (ví dụ: 0,3–0,4) dựa trên đường ROC.
 
-### 5.5.2 Script Demo
+### 5.5.2 Sơ Đồ Pipeline Inference
+
+```mermaid
+flowchart TD
+    A["Anh dau vao - dinh dang bat ky"] --> B["PIL.Image.open - convert RGB"]
+    B --> C["Resize 224x224 - Normalize ImageNet - ToTensorV2"]
+    C --> D["unsqueeze 0 - Them batch dimension"]
+    D --> E["model.eval - Forward pass"]
+    E --> F["torch.sigmoid logit - p trong 0,1"]
+    F --> G{"p > 0.5?"}
+    G -- Co --> H["Fake - Anh gia mao"]
+    G -- Khong --> I["Real - Anh that"]
+```
+
+### 5.5.3 Script Demo
 
 Hai script inference đã được triển khai:
 
