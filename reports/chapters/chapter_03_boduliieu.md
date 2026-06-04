@@ -34,7 +34,7 @@ Cấu trúc thư mục trong từng bộ dữ liệu mã hóa nhãn: thư mục 
 Mã MD5 (một loại "vân tay số" — mỗi file ảnh sẽ có một mã duy nhất, hai file giống nhau hoàn toàn sẽ có cùng mã) được tính cho từng ảnh từ tất cả bốn nguồn. Những ảnh có cùng mã MD5 được giữ lại một bản duy nhất, loại bỏ hoàn toàn trước khi phân chia tập. Bước này đảm bảo không có ảnh nào xuất hiện nhiều lần trong tập huấn luyện do các bộ dữ liệu có phần chồng lấp.
 
 **Bước 3 — Phân chia stratified 70/15/15:**  
-Sau khi dedup, tập dữ liệu được chia theo tỷ lệ 70% huấn luyện / 15% kiểm định / 15% kiểm tra, sử dụng phân chia phân tầng (`stratified split`, `random_state=42`) để đảm bảo tỷ lệ nhãn thật/giả đồng đều trong cả ba tập. Kết quả được lưu vào ba file CSV: `data/splits/train.csv`, `data/splits/val.csv`, `data/splits/test.csv` với schema gồm hai cột: `image_path` (đường dẫn tuyệt đối, kiểu chuỗi) và `label` (số nguyên: 0 = thật, 1 = giả).
+Sau khi dedup, tập dữ liệu được chia theo tỷ lệ 70% huấn luyện / 15% kiểm định / 15% kiểm tra, sử dụng phân chia phân tầng (`stratified split`, `random_state=42`) để đảm bảo tỷ lệ nhãn thật/giả đồng đều trong cả ba tập. Kết quả được lưu vào ba file CSV: `data/splits/train.csv`, `data/splits/val.csv`, `data/splits/test.csv` với schema gồm hai cột: `image_path` (đường dẫn tuyệt đối, kiểu chuỗi) và `label` (chuỗi: `'Real'` = thật, `'Fake'` = giả; ánh xạ sang `Real=0`, `Fake=1` trong `FaceDataset`).
 
 ### 3.1.3 Thống Kê Sau Hợp Nhất
 

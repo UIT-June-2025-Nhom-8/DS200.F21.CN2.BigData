@@ -37,6 +37,8 @@ from model import FaceDetectionModel  # noqa: E402
 random.seed(42)
 np.random.seed(42)
 torch.manual_seed(42)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed_all(42)
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
@@ -70,7 +72,7 @@ def load_model(checkpoint_path: Path, device: torch.device) -> FaceDetectionMode
     model = FaceDetectionModel(pretrained=False)
     try:
         checkpoint = torch.load(
-            checkpoint_path, map_location=device, weights_only=False
+            checkpoint_path, map_location=device, weights_only=True
         )
     except TypeError:
         # weights_only kwarg not available in older PyTorch

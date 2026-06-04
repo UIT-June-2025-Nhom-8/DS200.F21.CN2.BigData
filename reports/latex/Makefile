@@ -1,19 +1,19 @@
 ## Makefile — DS200.F21.CN2 LaTeX Report
-## Yêu cầu: XeLaTeX + Biber (TeX Live 2023+)
+## Yêu cầu: XeLaTeX + BibTeX (TeX Live 2023+)
 
 MAIN   = main
 ENGINE = xelatex
-BIBER  = biber
+BIBTEX = bibtex
 FLAGS  = -interaction=nonstopmode -halt-on-error
 
 .PHONY: all clean distclean
 
 all: $(MAIN).pdf
 
-## Build đầy đủ (2 lần xelatex + biber + 1 lần nữa)
+## Build đầy đủ (2 lần xelatex + bibtex + 1 lần nữa)
 $(MAIN).pdf: $(MAIN).tex references.bib chapters/*.tex
 	$(ENGINE) $(FLAGS) $(MAIN)
-	$(BIBER) $(MAIN)
+	$(BIBTEX) $(MAIN)
 	$(ENGINE) $(FLAGS) $(MAIN)
 	$(ENGINE) $(FLAGS) $(MAIN)
 
