@@ -1,0 +1,101 @@
+\begin{thebibliography}{13}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bird and Lotfi(2024)]{bird2024cifake}
+Jordan~J. Bird and Ahmad Lotfi.
+\newblock {CIFAKE}: Image classification and explainable identification of
+  {AI}-generated synthetic images.
+\newblock \emph{IEEE Access}, 12:\penalty0 1--12, 2024.
+\newblock \doi{10.1109/ACCESS.2024.3360142}.
+
+\bibitem[Buslaev et~al.(2020)Buslaev, Iglovikov, Khvedchenya, Parinov,
+  Druzhinin, and Kalinin]{buslaev2020albumentations}
+Alexander Buslaev, Vladimir~I. Iglovikov, Eugene Khvedchenya, Alex Parinov,
+  Mikhail Druzhinin, and Alexandr~A. Kalinin.
+\newblock Albumentations: Fast and flexible image augmentations.
+\newblock \emph{Information}, 11\penalty0 (2):\penalty0 125, 2020.
+\newblock \doi{10.3390/info11020125}.
+
+\bibitem[Karras et~al.(2020)Karras, Laine, Aittala, Hellsten, Lehtinen, and
+  Aila]{karras2020stylegan2}
+Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen, and
+  Timo Aila.
+\newblock Analyzing and improving the image quality of {StyleGAN}.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, pages 8110--8119, 2020.
+
+\bibitem[Li et~al.(2020)Li, Yang, Sun, Qi, and Lyu]{li2020celebdf}
+Yuezun Li, Xin Yang, Pu~Sun, Honggang Qi, and Siwei Lyu.
+\newblock {Celeb-DF}: A large-scale challenging dataset for {DeepFake}
+  forensics.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, pages 3207--3216, 2020.
+
+\bibitem[Lin et~al.(2025)]{lin2025aiface}
+Yinan Lin et~al.
+\newblock {AI-Face}: A million-scale demographically annotated {AI}-generated
+  face dataset and fairness benchmark.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, 2025.
+
+\bibitem[Loshchilov and Hutter(2019)]{loshchilov2019adamw}
+Ilya Loshchilov and Frank Hutter.
+\newblock Decoupled weight decay regularization.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2019.
+
+\bibitem[Roy et~al.(2026)]{roy2026comprehensive}
+Subhadeep Roy et~al.
+\newblock A comprehensive dataset for human vs.\ {AI} generated image
+  detection, 2026.
+
+\bibitem[Rössler et~al.(2019)Rössler, Cozzolino, Verdoliva, Riess, Thies, and
+  Nießner]{rossler2019faceforensics}
+Andreas Rössler, Davide Cozzolino, Luisa Verdoliva, Christian Riess, Justus
+  Thies, and Matthias Nießner.
+\newblock {FaceForensics++}: Learning to detect manipulated facial images.
+\newblock In \emph{Proceedings of the IEEE/CVF International Conference on
+  Computer Vision (ICCV)}, pages 1--11, 2019.
+
+\bibitem[Selvaraju et~al.(2017)Selvaraju, Cogswell, Das, Vedantam, Parikh, and
+  Batra]{selvaraju2017gradcam}
+Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam,
+  Devi Parikh, and Dhruv Batra.
+\newblock {Grad-CAM}: Visual explanations from deep networks via gradient-based
+  localization.
+\newblock In \emph{Proceedings of the IEEE/CVF International Conference on
+  Computer Vision (ICCV)}, pages 618--626, 2017.
+
+\bibitem[Tan and Le(2019)]{tan2019efficientnet}
+Mingxing Tan and Quoc~V. Le.
+\newblock {EfficientNet}: Rethinking model scaling for convolutional neural
+  networks.
+\newblock In \emph{Proceedings of the 36th International Conference on Machine
+  Learning (ICML)}, pages 6105--6114, 2019.
+
+\bibitem[Wightman(2019)]{wightman2019timm}
+Ross Wightman.
+\newblock {PyTorch} image models.
+\newblock \url{https://github.com/rwightman/pytorch-image-models}, 2019.
+\newblock GitHub repository.
+
+\bibitem[Yan et~al.(2025)]{yan2025aide}
+Shilin Yan et~al.
+\newblock {AIDE}: A sanity check for {AI}-generated image detection.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2025.
+
+\bibitem[Zhu et~al.(2023)Zhu, Chen, Yan, Huang, Lin, Li, Tu, Hu, Hu, and
+  Wang]{zhu2023genimage}
+Mingjian Zhu, Hanting Chen, Qiangyu Yan, Xudong Huang, Guanyu Lin, Wei Li,
+  Zhijun Tu, Hailin Hu, Jie Hu, and Yunhe Wang.
+\newblock {GenImage}: A million-scale benchmark for detecting {AI}-generated
+  image.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2023.
+
+\end{thebibliography}

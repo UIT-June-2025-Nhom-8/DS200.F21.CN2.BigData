@@ -1,0 +1,45 @@
+\chapter{NGHIÊN CỨU LIÊN QUAN}
+
+\section{Các Nghiên Cứu Về Phát Hiện Khuôn Mặt Giả Mạo}
+
+Phát hiện khuôn mặt giả mạo (face forgery detection) đã trở thành một nhánh nghiên cứu tích cực trong cộng đồng thị giác máy tính kể từ khi các phương pháp tổng hợp ảnh bằng GAN trở nên phổ biến. Các hướng tiếp cận chính có thể phân loại thành ba nhóm: phân tích miền tần số, phân tích texture cục bộ, và học đặc trưng bằng CNN sâu.
+
+\textbf{FaceForensics++} \cite{rossler2019faceforensics} là một trong những bộ dữ liệu và phương pháp chuẩn quan trọng nhất trong lĩnh vực này. Rössler và cộng sự (ICCV 2019) xây dựng bộ dữ liệu gồm hơn 1,8 triệu frame từ 1.000 video gốc, áp dụng bốn phương pháp thao túng khuôn mặt (DeepFakes, Face2Face, FaceSwap, NeuralTextures) và huấn luyện nhiều kiến trúc CNN để phát hiện. Kết quả cho thấy các mô hình CNN sâu vượt trội so với phương pháp trích xuất đặc trưng thủ công trong điều kiện ảnh chất lượng cao, nhưng hiệu suất suy giảm đáng kể khi ảnh bị nén JPEG --- gợi ý về vấn đề robustness mà nghiên cứu này cũng giải quyết.
+
+\textbf{Celeb-DF} \cite{li2020celebdf} (Li và cộng sự, CVPR 2020) đặt ra thách thức cao hơn với bộ dữ liệu deepfake thế hệ mới gồm 5.639 video chất lượng cao từ 59 người nổi tiếng. Nghiên cứu này chứng minh rằng nhiều mô hình đạt AUC cao trên FaceForensics++ nhưng lại suy giảm mạnh trên Celeb-DF, làm nổi bật vấn đề generalization cross-dataset tương tự thử thách cross-generator của đề tài này.
+
+\textbf{CIFAKE} \cite{bird2024cifake} (Bird \& Lotfi, IEEE Access 2024) nghiên cứu phân loại ảnh do AI tổng hợp bằng diffusion models so với ảnh thật, sử dụng CNN và phân tích explainability (LIME, SHAP). Kết quả cho thấy CNN đơn giản có thể đạt accuracy $> 90\%$ nhưng đặc trưng quyết định thường là các artifact texture tinh vi --- phù hợp với quan sát FFT trong EDA của đề tài này.
+
+\textbf{GenImage} \cite{zhu2023genimage} (Zhu và cộng sự, NeurIPS 2023) xây dựng benchmark triệu ảnh từ 8 mô hình sinh ảnh khác nhau (Stable Diffusion, Midjourney, DALL-E, v.v.) để đánh giá khả năng tổng quát hóa cross-generator. Nghiên cứu chỉ ra rằng mô hình huấn luyện trên ảnh từ một hoặc vài generator thường suy giảm đáng kể khi gặp generator mới --- xác nhận tầm quan trọng của bộ dữ liệu đa nguồn như cách tiếp cận của đề tài này.
+
+\section{Các Nghiên Cứu Về Tổng Hợp Khuôn Mặt Bằng AI}
+
+\textbf{StyleGAN2} \cite{karras2020stylegan2} (Karras và cộng sự, CVPR 2020) là kiến trúc GAN tạo khuôn mặt photorealistic chất lượng cao nhất tính đến thời điểm xuất bản, dựa trên cơ chế style-based generator phân tách thông tin content và style ở từng mức độ phân giải độc lập. Khuôn mặt được tổng hợp bởi StyleGAN2 (chiếm 140.000/316.530 ảnh trong tập dữ liệu của đề tài) rất khó phân biệt bằng mắt thường. Các artifact đặc trưng (vùng tai, tóc, hoa tai) được phát hiện qua EDA và là mục tiêu học tập quan trọng của mô hình.
+
+\textbf{AI-Face} \cite{lin2025aiface} (Lin và cộng sự, CVPR 2025) cung cấp bộ dữ liệu và benchmark đánh giá sự công bằng (fairness) trong phát hiện khuôn mặt AI-generated, bao gồm ảnh từ nhiều phương pháp sinh thế hệ mới. Nghiên cứu chỉ ra rằng mô hình phát hiện thường có thiên vị về sắc tộc và giới tính --- một hạn chế cần lưu ý khi đánh giá trên các bộ dữ liệu đa dạng như Hard-FakeReal.
+
+\textbf{AIDE} \cite{yan2025aide} (Yan và cộng sự, ICLR 2025) đề xuất framework kiểm tra độ tin cậy cho các phương pháp phát hiện ảnh AI-generated, chỉ ra rằng nhiều mô hình đạt kết quả cao nhờ học các đặc trưng không bền vững (non-robust features). Kết quả này nhấn mạnh tầm quan trọng của bài kiểm tra robustness mà đề tài này triển khai.
+
+\section{Các Nghiên Cứu Về EfficientNet và Transfer Learning}
+
+\textbf{EfficientNet} \cite{tan2019efficientnet} (Tan \& Le, ICML 2019) giới thiệu phương pháp \textit{compound scaling} để mở rộng mạng CNN: thay vì chỉ tăng độ sâu (depth), độ rộng (width) hoặc độ phân giải (resolution) một chiều, EfficientNet scale đồng thời cả ba chiều theo một hệ số tỷ lệ thống nhất được tìm bằng Neural Architecture Search. EfficientNet-B0 --- phiên bản nhỏ nhất --- đạt accuracy tương đương ResNet-50 với chỉ $\approx 5{,}3$M tham số (so với $\approx 25{,}6$M).
+
+Transfer learning từ mô hình tiền huấn luyện trên ImageNet đã được chứng minh hiệu quả trong nhiều bài toán phân tích ảnh khuôn mặt. Đặc trưng cấp thấp (cạnh, góc, texture) học được từ ImageNet có giá trị tái sử dụng cao trong phân tích artifact của ảnh khuôn mặt giả mạo. Chiến lược progressive unfreezing --- đóng băng backbone trong giai đoạn đầu rồi mở băng dần --- được chứng minh giảm nguy cơ \textit{catastrophic forgetting} và cải thiện kết quả cuối.
+
+\textbf{Roy và cộng sự} \cite{roy2026comprehensive} (2026) xây dựng bộ dữ liệu toàn diện kết hợp ảnh người thật và ảnh AI-generated từ nhiều nguồn, phân tích đặc điểm phân biệt và so sánh nhiều kiến trúc CNN. Nghiên cứu này xác nhận rằng các kiến trúc pretrained trên ImageNet (bao gồm EfficientNet) là điểm khởi đầu tốt hơn so với huấn luyện từ đầu cho bài toán phát hiện ảnh AI-generated.
+
+\section{Điểm Mới Của Đề Tài}
+
+So sánh với các nghiên cứu trên, đề tài này có những điểm khác biệt và đóng góp cụ thể:
+
+\begin{itemize}
+  \item \textbf{Bộ dữ liệu đa nguồn quy mô lớn:} Tổng hợp bốn bộ Kaggle đại diện cho bốn phương pháp sinh khác nhau (StyleGAN2, manipulation-based, GAN bậc cao, ciplab), tạo ra tập huấn luyện 221.571 ảnh đa dạng hơn so với các nghiên cứu thường chỉ sử dụng một nguồn đơn lẻ.
+
+  \item \textbf{Chiến lược huấn luyện 3 giai đoạn có kiểm soát:} Áp dụng progressive unfreezing với EarlyStopping và ReduceLROnPlateau ở mỗi giai đoạn, với toàn bộ siêu tham số quản lý tập trung qua YAML để đảm bảo tái lập hoàn toàn.
+
+  \item \textbf{Đánh giá cross-generator có hệ thống:} Thực hiện hold-out evaluation theo từng bộ dữ liệu nguồn để định lượng khả năng tổng quát hóa thực tế.
+
+  \item \textbf{Đánh giá robustness với nhiễu thực tế:} Kiểm tra JPEG compression ($q = 70/50/30$), downscale (50\%/25\%) và Gaussian blur ($\sigma = 1/2$), phản ánh điều kiện ảnh phổ biến khi chia sẻ qua mạng xã hội.
+
+  \item \textbf{Explainability qua Grad-CAM \cite{selvaraju2017gradcam}:} Cung cấp bằng chứng trực quan về cơ chế quyết định của mô hình, tăng tính minh bạch và tin cậy.
+\end{itemize}

@@ -1,0 +1,21 @@
+\chapter{KẾT LUẬN}
+
+\section{Tóm Tắt Đề Tài}
+
+Đề tài nghiên cứu bài toán phân loại nhị phân ảnh khuôn mặt thật và ảnh khuôn mặt do AI tổng hợp --- một vấn đề kỹ thuật có ý nghĩa xã hội cấp thiết trong bối cảnh các công cụ sinh ảnh bằng GAN và diffusion models ngày càng tạo ra nội dung photorealistic khó phân biệt bằng mắt thường. Đề tài xây dựng pipeline hoàn chỉnh từ thu thập và hợp nhất bốn bộ dữ liệu Kaggle đa dạng (316.530 ảnh sau dedup) đến huấn luyện mô hình EfficientNet-B0 \cite{tan2019efficientnet} theo chiến lược fine-tuning 3 giai đoạn (progressive unfreezing), đạt Accuracy 97,33\%, F1-Score 97,45\% và AUC-ROC 99,70\% trên tập kiểm tra độc lập. Ngoài đánh giá chuẩn, đề tài thiết kế thêm bài kiểm tra cross-generator để đo khả năng tổng quát hóa, bài kiểm tra robustness để đánh giá độ bền dưới nhiễu thực tế, và trực quan hóa Grad-CAM \cite{selvaraju2017gradcam} để giải thích cơ chế quyết định của mô hình.
+
+\section{Đóng Góp Của Đề Tài}
+
+Đề tài thực hiện năm đóng góp cụ thể:
+
+\begin{enumerate}
+  \item \textbf{Pipeline dữ liệu đa nguồn quy mô lớn:} Xây dựng quy trình hợp nhất bốn bộ dữ liệu Kaggle với dedup MD5 và stratified split 70/15/15, tạo tập huấn luyện 221.571 ảnh đa dạng hơn so với các nghiên cứu thường sử dụng một nguồn đơn lẻ.
+
+  \item \textbf{Chiến lược huấn luyện 3 giai đoạn có kiểm soát:} Áp dụng progressive unfreezing (Head-only $\to$ Partial unfreeze blocks 5--6 $\to$ Full fine-tune) kết hợp EarlyStopping và ReduceLROnPlateau, với siêu tham số quản lý tập trung qua \texttt{train\_config.yaml}. Val accuracy cải thiện rõ rệt: 86,63\% $\to$ 94,54\% $\to$ 97,34\%.
+
+  \item \textbf{Đánh giá cross-generator có hệ thống:} Thực hiện hold-out evaluation theo từng bộ dữ liệu nguồn để định lượng khả năng tổng quát hóa thực tế --- quan trọng hơn benchmark in-distribution thông thường.
+
+  \item \textbf{Đánh giá robustness với nhiễu thực tế:} Kiểm tra JPEG compression ($q = 70/50/30$), downscale (50\%/25\%) và Gaussian blur ($\sigma = 1/2$), phản ánh điều kiện ảnh phổ biến khi chia sẻ qua mạng xã hội.
+
+  \item \textbf{Explainability qua Grad-CAM:} Cung cấp bằng chứng trực quan về vùng ảnh mô hình tập trung khi phân loại, tăng tính minh bạch và hỗ trợ tin cậy hóa hệ thống AI trong ứng dụng thực tế.
+\end{enumerate}

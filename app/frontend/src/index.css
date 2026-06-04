@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Noto+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --bg-base:      #05080f;
+  --bg-surface:   #090e1a;
+  --bg-card:      #0c1220;
+  --bg-hover:     #111d30;
+  --border:       rgba(0, 200, 255, 0.12);
+  --border-glow:  rgba(0, 200, 255, 0.4);
+  --cyan:         #00c8ff;
+  --cyan-dim:     rgba(0, 200, 255, 0.6);
+  --green:        #00ff9d;
+  --red:          #ff3b6b;
+  --amber:        #ffb800;
+  --text-1:       #dce8ff;
+  --text-2:       #7a96c2;
+  --text-3:       #3d5070;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-base);
+  color: var(--text-1);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0,200,255,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Font utilities */
+.font-display { font-family: 'Chakra Petch', sans-serif; }
+.font-mono    { font-family: 'JetBrains Mono', monospace; }
+
+/* Scan line animation */
+@keyframes scan-sweep {
+  0%   { top: 0; }
+  50%  { top: calc(100% - 2px); }
+  100% { top: 0; }
+}
+
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+@keyframes text-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes ring-progress {
+  0%   { stroke-dashoffset: 220; }
+  50%  { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 220; }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-scan-sweep   { animation: scan-sweep 3s ease-in-out infinite; }
+.animate-ring-spin    { animation: ring-spin 8s linear infinite; }
+.animate-ring-spin-rev{ animation: ring-spin 12s linear infinite reverse; }
+.animate-dot-pulse    { animation: dot-pulse 2s ease-in-out infinite; }
+.animate-text-pulse   { animation: text-pulse 1.5s ease-in-out infinite; }
+.animate-ring-progress{ animation: ring-progress 2s ease-in-out infinite; }
+.animate-shimmer      { animation: shimmer 2.5s ease-in-out infinite; }
+.animate-fade-in-up   { animation: fade-in-up 0.5s cubic-bezier(0.4,0,0.2,1) both; }
+.animate-fade-in      { animation: fade-in 0.3s ease both; }
