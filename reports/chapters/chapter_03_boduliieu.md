@@ -34,9 +34,30 @@ Cấu trúc thư mục trong từng bộ dữ liệu mã hóa nhãn: thư mục 
 Mã MD5 (một loại "vân tay số" — mỗi file ảnh sẽ có một mã duy nhất, hai file giống nhau hoàn toàn sẽ có cùng mã) được tính cho từng ảnh từ tất cả bốn nguồn. Những ảnh có cùng mã MD5 được giữ lại một bản duy nhất, loại bỏ hoàn toàn trước khi phân chia tập. Bước này đảm bảo không có ảnh nào xuất hiện nhiều lần trong tập huấn luyện do các bộ dữ liệu có phần chồng lấp.
 
 **Bước 3 — Phân chia stratified 70/15/15:**  
-Sau khi dedup, tập dữ liệu được chia theo tỷ lệ 70% huấn luyện / 15% kiểm định / 15% kiểm tra, sử dụng phân chia phân tầng (`stratified split`, `random_state=42`) để đảm bảo tỷ lệ nhãn thật/giả đồng đều trong cả ba tập. Kết quả được lưu vào ba file CSV: `data/splits/train.csv`, `data/splits/val.csv`, `data/splits/test.csv` với schema gồm hai cột: `image_path` (đường dẫn tuyệt đối, kiểu chuỗi) và `label` (số nguyên: 0 = thật, 1 = giả).
+Sau khi dedup, tập dữ liệu được chia theo tỷ lệ 70% huấn luyện / 15% kiểm định / 15% kiểm tra, sử dụng phân chia phân tầng (`stratified split`, `random_state=42`) để đảm bảo tỷ lệ nhãn thật/giả đồng đều trong cả ba tập. Kết quả được lưu vào ba file CSV: `data/splits/train.csv`, `data/splits/val.csv`, `data/splits/test.csv` với schema gồm hai cột: `image_path` (đường dẫn tuyệt đối, kiểu chuỗi) và `label` (chuỗi: `'Real'` = thật, `'Fake'` = giả; ánh xạ sang `Real=0`, `Fake=1` trong `FaceDataset`).
 
-### 3.1.3 Thống Kê Sau Hợp Nhất
+### 3.1.3 Sơ Đồ Quy Trình Hợp Nhất Dữ Liệu
+
+Sơ đồ dưới đây trực quan hóa toàn bộ pipeline từ bốn nguồn dữ liệu thô đến tập huấn luyện/kiểm định/kiểm tra sẵn sàng cho mô hình:
+
+```mermaid
+flowchart TD
+    A1["140k-StyleGAN\n70k thật + 70k giả"] --> M
+    A2["Deepfake-Real\n105k ảnh"] --> M
+    A3["Hard-FakeReal\n1.289 ảnh"] --> M
+    A4["ciplab\n2.041 ảnh"] --> M
+    M["Hợp nhất 4 nguồn\nSuy nhãn từ tên thư mục: Real=0, Fake=1"] --> D
+    D["MD5 Deduplication\n316.530 ảnh sau loại trùng"] --> S
+    S["Stratified Split 70 / 15 / 15\nrandom_state=42"] --> TR
+    S --> V
+    S --> TE
+    TR["train.csv\n221.571 ảnh"] --> L
+    V["val.csv\n47.479 ảnh"] --> L
+    TE["test.csv\n47.480 ảnh"] --> L
+    L["FaceDataset + DataLoader\nbatch_size=128\naugmentation chỉ áp dụng tập train"]
+```
+
+### 3.1.4 Thống Kê Sau Hợp Nhất
 
 Sau khi loại bỏ trùng lặp MD5 và phân chia, tập dữ liệu cuối cùng gồm **316.530 ảnh**, phân bổ như sau:
 

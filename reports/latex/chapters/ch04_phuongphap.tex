@@ -78,6 +78,47 @@ nn.Sequential(
 \end{equation}
 trong đó $x$ là logit đầu ra, $y \in \{0, 1\}$ là nhãn thật, $\sigma(\cdot)$ là hàm sigmoid. Sigmoid \textbf{không} được áp dụng trước khi tính mất mát --- chỉ áp dụng khi inference.
 
+\subsection{Sơ Đồ Kiến Trúc Tổng Thể}
+
+Hình~\ref{fig:model_architecture} trực quan hóa luồng dữ liệu qua toàn bộ mô hình từ ảnh đầu vào đến quyết định phân loại cuối cùng.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.52cm,
+    every node/.style={font=\small},
+    bk/.style  = {rectangle, draw=orange!70!black, fill=orange!7, rounded corners=3pt,
+                  minimum width=9.5cm, minimum height=0.88cm, align=center},
+    hd/.style  = {rectangle, draw=green!60!black, fill=green!7, rounded corners=3pt,
+                  minimum width=9.5cm, minimum height=0.88cm, align=center},
+    io/.style  = {rectangle, draw=uitblue, fill=uitblue!8, rounded corners=3pt,
+                  minimum width=9.5cm, minimum height=0.88cm, align=center},
+    arr/.style = {-Stealth, semithick}
+  ]
+    \node[io] (inp)  {Ảnh đầu vào $\;\big|\;$ Resize($224{\times}224$) $\;\big|\;$ Normalize (ImageNet)};
+    \node[bk, below=of inp]  (bk0)
+      {EfficientNet-B0: MBConv Blocks 0--4 \quad \textit{(đóng băng ở Giai đoạn 1--2)}};
+    \node[bk, below=of bk0]  (bk1)
+      {EfficientNet-B0: MBConv Blocks 5--6 \quad \textit{(mở băng từ Giai đoạn 2)}};
+    \node[bk, below=of bk1]  (fm)
+      {Feature Map $\quad 1280 \times 7 \times 7$};
+    \node[hd, below=of fm]   (gp)
+      {AdaptiveAvgPool2d(1,1) $\;\to\;$ Flatten $\;\to\;$ $\mathbb{R}^{1280}$};
+    \node[hd, below=of gp]   (fc1)
+      {Linear(1280, 256) $\;\to\;$ ReLU $\;\to\;$ Dropout(0.5)};
+    \node[hd, below=of fc1]  (fc2)
+      {Linear(256, 1) \quad Logit $\in \mathbb{R}$};
+    \node[io, below=of fc2]  (out)
+      {Sigmoid $\to$ $p \in [0,1]$ $\;\;\big|\;\;$ Real ($p \leq 0{,}5$) $\;/\;$ Fake ($p > 0{,}5$)};
+
+    \foreach \a/\b in {inp/bk0, bk0/bk1, bk1/fm, fm/gp, gp/fc1, fc1/fc2, fc2/out}
+      \draw[arr] (\a.south) -- (\b.north);
+  \end{tikzpicture}
+  \caption{Kiến trúc tổng thể mô hình EfficientNet-B0 với classification head tùy chỉnh.
+           Cam: EfficientNet-B0 backbone pretrained. Xanh lá: custom classification head.}
+  \label{fig:model_architecture}
+\end{figure}
+
 \subsection{Chiến Lược Huấn Luyện 3 Giai Đoạn}
 
 Chiến lược dựa trên nguyên tắc \textit{discriminative fine-tuning}: các lớp gần đầu vào đã học đặc trưng tốt từ ImageNet nên cần learning rate thấp; các lớp đầu ra mới cần học từ đầu với learning rate cao hơn.
@@ -113,6 +154,69 @@ Chiến lược dựa trên nguyên tắc \textit{discriminative fine-tuning}: c
 \end{table}
 
 Đáng chú ý, EarlyStopping không kích hoạt ở bất kỳ giai đoạn nào --- mô hình tiếp tục cải thiện đến epoch cuối. Val loss giảm liên tục $0{,}310 \to 0{,}138 \to 0{,}070$ ($\approx 77\%$ tổng mức giảm).
+
+Hình~\ref{fig:training_stages} trình bày sơ đồ luồng toàn bộ quy trình huấn luyện 3 giai đoạn, từ khởi tạo mô hình đến đánh giá trên tập test độc lập.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    every node/.style={font=\small},
+    stage/.style = {rectangle, draw=uitblue, fill=uitblue!10, rounded corners=4pt,
+                    minimum width=3.4cm, minimum height=2.6cm, align=center},
+    res/.style   = {rectangle, draw=green!60!black, fill=green!7, rounded corners=3pt,
+                    text width=3.2cm, minimum height=0.88cm, align=center, font=\footnotesize},
+    fin/.style   = {rectangle, draw=orange!70!black, fill=orange!8, rounded corners=4pt,
+                    minimum width=11.5cm, minimum height=0.95cm, align=center},
+    arr/.style   = {-Stealth, semithick, uitblue}
+  ]
+    \node[stage] (s1) at (0,0) {
+      \textbf{Giai đoạn 1}\\[4pt]
+      \small Freeze Backbone\\
+      LR $= 10^{-4}$\\
+      30 epochs\\
+      Head only
+    };
+    \node[stage] (s2) at (4.2,0) {
+      \textbf{Giai đoạn 2}\\[4pt]
+      \small Unfreeze B5--B6\\
+      LR $= 10^{-5}$\\
+      30 epochs\\
+      Head + Blocks 5--6
+    };
+    \node[stage] (s3) at (8.4,0) {
+      \textbf{Giai đoạn 3}\\[4pt]
+      \small Full Fine-tune\\
+      LR $= 10^{-6}$\\
+      30 epochs\\
+      Toàn bộ mô hình
+    };
+
+    \node[res, below=0.5cm of s1] (r1) {Val Acc: 86,63\%\\Val Loss: 0,310};
+    \node[res, below=0.5cm of s2] (r2) {Val Acc: 94,54\%\\Val Loss: 0,138};
+    \node[res, below=0.5cm of s3] (r3) {Val Acc: 97,34\%\\Val Loss: 0,070};
+
+    % eval positioned directly below middle result — no empty space
+    \node[fin, below=0.75cm of r2] (eval) {
+      Đánh giá trên Test Set (47.480 ảnh):
+      \quad Acc 97,33\% $\;|\;$ F1 97,45\% $\;|\;$ AUC-ROC 99,70\%
+    };
+
+    % Horizontal arrows — label slightly raised to clear box border
+    \draw[arr] (s1.east) -- node[above, font=\footnotesize\itshape, yshift=1pt] {checkpoint} (s2.west);
+    \draw[arr] (s2.east) -- node[above, font=\footnotesize\itshape, yshift=1pt] {checkpoint} (s3.west);
+
+    % Vertical arrows from stages to results
+    \foreach \s/\r in {s1/r1, s2/r2, s3/r3}
+      \draw[-Stealth, semithick] (\s.south) -- (\r.north);
+
+    % Three vertical arrows converging straight down into eval.north
+    \draw[-Stealth, semithick] (r1.south) -- (r1.south |- eval.north);
+    \draw[-Stealth, semithick] (r2.south) -- (eval.north);
+    \draw[-Stealth, semithick] (r3.south) -- (r3.south |- eval.north);
+  \end{tikzpicture}
+  \caption{Sơ đồ chiến lược huấn luyện 3 giai đoạn progressive unfreezing và kết quả từng giai đoạn}
+  \label{fig:training_stages}
+\end{figure}
 
 \section{Pipeline Tiền Xử Lý và Tăng Cường Dữ Liệu}
 
@@ -188,3 +292,42 @@ Mô hình được huấn luyện trong $\approx 17$ giờ trên phần cứng d
 \textbf{Mixed-precision training (FP16):} Được bật bằng \texttt{torch.cuda.amp.autocast()} kết hợp \texttt{GradScaler}, giảm VRAM $\approx 40\%$ và tăng tốc $\approx 1{,}5$--$2\times$ trên RTX 5070.
 
 \textbf{Tái lập kết quả:} Seed 42 cố định cho \texttt{random}, \texttt{numpy}, \texttt{torch} và \texttt{torch.cuda}; \texttt{deterministic=True}.
+
+\section{Lớp FaceDataset và DataLoader}
+
+\subsection{Thiết Kế Lớp FaceDataset}
+
+Lớp \texttt{FaceDataset} (định nghĩa tại \texttt{src/dataset.py}) kế thừa \texttt{torch.utils.data.Dataset} và đóng vai trò giao diện giữa file CSV phân chia và pipeline huấn luyện. Luồng xử lý bên trong \texttt{\_\_getitem\_\_} gồm ba bước:
+
+\begin{enumerate}
+  \item Đọc đường dẫn ảnh và nhãn từ DataFrame đã nạp trong \texttt{\_\_init\_\_}.
+  \item Mở ảnh bằng \texttt{PIL.Image.open()}, chuyển sang mảng NumPy RGB, áp dụng transform (albumentations hoặc chỉ resize+normalize cho val/test).
+  \item Trả về cặp \texttt{(image\_tensor, label\_tensor)} với \texttt{label\_tensor} kiểu \texttt{torch.float32} --- kiểu dữ liệu bắt buộc bởi \texttt{BCEWithLogitsLoss}.
+\end{enumerate}
+
+\subsection{Cấu Hình DataLoader}
+
+\begin{table}[H]
+  \centering
+  \caption{Cấu hình DataLoader cho ba tập dữ liệu}
+  \label{tab:dataloader}
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Tham số} & \textbf{Train} & \textbf{Val} & \textbf{Test} \\
+    \midrule
+    batch\_size   & 128  & 128  & 128  \\
+    shuffle       & True & False & False \\
+    num\_workers  & 2    & 2    & 2    \\
+    pin\_memory   & True & True & True \\
+    drop\_last    & False & False & False \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Lý do chọn \texttt{num\_workers=2}:} Trên hệ thống với CPU 6 nhân, \texttt{num\_workers=4} gây tranh chấp tài nguyên với tiến trình huấn luyện chính. Qua thử nghiệm, giá trị 2 cho thời gian nạp dữ liệu đủ nhanh để GPU không bị đợi (bottleneck tại data loading $<$ 5\% thời gian mỗi batch).
+
+\subsection{Quy Trình Quản Lý Siêu Tham Số}
+
+Toàn bộ siêu tham số được khai báo tập trung trong \texttt{configs/train\_config.yaml}. Không có giá trị nào được hardcode trong mã nguồn. Khi khởi chạy, script đọc file YAML, ghi log đầy đủ các tham số cùng với phiên bản thư viện và thông tin GPU, đảm bảo mọi lần chạy đều có thể tái lập và truy xuất cấu hình sau này.
+
+Quy trình quản lý thực nghiệm này --- seed cố định, tham số qua YAML, log phiên bản --- là thực hành tốt trong nghiên cứu học sâu để đảm bảo tính tái lập (reproducibility), một yêu cầu ngày càng được nhấn mạnh trong cộng đồng ML nghiên cứu.

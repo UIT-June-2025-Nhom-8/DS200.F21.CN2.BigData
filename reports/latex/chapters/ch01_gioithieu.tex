@@ -62,3 +62,39 @@ Ràng buộc thực tế quan trọng: mô hình phải hoạt động trên ả
 
   \item \textbf{Grad-CAM explainability:} Trực quan hóa vùng ảnh mô hình tập trung khi phân loại; phân tích tương quan với artifact quan sát được trong EDA.
 \end{enumerate}
+
+\section{Tổng Quan Mối Đe Dọa Từ Khuôn Mặt AI-Generated}
+
+Để định lượng tính cấp thiết của bài toán, Bảng~\ref{tab:deepfake_timeline} tóm tắt một số mốc sự kiện và kết quả nghiên cứu quan trọng liên quan đến deepfake và ảnh AI-generated trong giai đoạn 2020--2025.
+
+\begin{table}[H]
+  \centering
+  \caption{Các mốc quan trọng về deepfake và ảnh AI-generated (2020--2025)}
+  \label{tab:deepfake_timeline}
+  \begin{tabularx}{\linewidth}{lXl}
+    \toprule
+    \textbf{Năm} & \textbf{Sự kiện / Kết quả nghiên cứu} & \textbf{Nguồn} \\
+    \midrule
+    2020 & StyleGAN2 tạo ảnh khuôn mặt không thể phân biệt với ảnh thật trong thử nghiệm với người dùng phổ thông; Celeb-DF ghi nhận mô hình tốt nhất chỉ đạt AUC 65,8\% khi đánh giá cross-dataset & Karras et al.; Li et al. \\
+    2021--2022 & Deepfake xuất hiện trong các chiến dịch thao túng chính trị; nội dung deepfake phi đồng thuận (NCII) tăng mạnh trên các nền tảng mạng xã hội lớn & Sensity AI (2022) \\
+    2023 & GenImage benchmark ghi nhận 8 loại generator khác nhau; mô hình phát hiện tốt nhất đạt $< 70\%$ accuracy trên generator chưa từng thấy & Zhu et al. (NeurIPS) \\
+    2024 & CIFAKE: CNN đơn giản đạt accuracy $> 90\%$ nhưng đặc trưng quyết định là artifact texture tinh vi, không phải nội dung ngữ nghĩa & Bird \& Lotfi (IEEE Access) \\
+    2025 & AI-Face benchmark ghi nhận thiên vị sắc tộc và giới tính trong các mô hình phát hiện hiện tại; AIDE phát hiện nhiều mô hình học đặc trưng không bền vững & Lin et al.; Yan et al. (ICLR) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Những số liệu này cho thấy cuộc chạy đua giữa công nghệ tạo deepfake và công nghệ phát hiện deepfake ngày càng gay cấn, với chênh lệch ngày càng gia tăng về phía tấn công. Vấn đề domain generalization --- mô hình phát hiện không tổng quát hóa được sang generator mới --- là thách thức cốt lõi chưa được giải quyết và cũng là trọng tâm thực nghiệm của đề tài này thông qua bài kiểm tra cross-generator.
+
+\section{Cấu Trúc Báo Cáo}
+
+Báo cáo được tổ chức thành bảy chương:
+
+\begin{itemize}
+  \item \textbf{Chương 2} trình bày các nghiên cứu liên quan, bao gồm các công trình về phát hiện khuôn mặt giả mạo, tổng hợp ảnh bằng GAN, và EfficientNet với transfer learning.
+  \item \textbf{Chương 3} mô tả bộ dữ liệu: bốn nguồn Kaggle, quy trình hợp nhất, phân tích EDA toàn diện, và kiểm tra tính toàn vẹn.
+  \item \textbf{Chương 4} trình bày phương pháp đề xuất: kiến trúc EfficientNet-B0, classification head, chiến lược huấn luyện 3 giai đoạn, và pipeline tiền xử lý.
+  \item \textbf{Chương 5} báo cáo kết quả thực nghiệm: kết quả trên tập test, cross-generator evaluation, robustness test, Grad-CAM, và phân tích lỗi.
+  \item \textbf{Chương 6} kết luận và nêu các đóng góp của đề tài.
+  \item \textbf{Chương 7} đề xuất sáu hướng phát triển tiếp theo với phân tích kỹ thuật.
+\end{itemize}

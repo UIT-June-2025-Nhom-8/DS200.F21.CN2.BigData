@@ -126,6 +126,47 @@ Toàn bộ quy trình 3 giai đoạn được thực thi tuần tự trong một
 
 ---
 
+### 4.1.4 Sơ Đồ Kiến Trúc Tổng Thể
+
+Sơ đồ luồng dữ liệu qua toàn bộ mô hình từ ảnh đầu vào đến quyết định phân loại:
+
+```mermaid
+flowchart TD
+    I["Ảnh đầu vào\n3 x 224 x 224"] --> N["Resize 224x224\nNormalize ImageNet"]
+    N --> B1["EfficientNet-B0\nMBConv Blocks 0-4\nDong bang GD 1-2"]
+    B1 --> B2["MBConv Blocks 5-6\nMo bang tu GD 2"]
+    B2 --> FM["Feature Map\n1280 x 7 x 7"]
+    FM --> P["AdaptiveAvgPool2d 1x1\nFlatten: 1280 chieu"]
+    P --> FC1["Linear 1280 to 256\nReLU - Dropout 0.5"]
+    FC1 --> FC2["Linear 256 to 1\nLogit"]
+    FC2 --> SIG["Sigmoid - p trong 0,1"]
+    SIG --> OUT{"p > 0.5?"}
+    OUT -- Co --> FAKE["Fake - Anh gia mao"]
+    OUT -- Khong --> REAL["Real - Anh that"]
+```
+
+### 4.1.5 Sơ Đồ Chiến Lược Huấn Luyện 3 Giai Đoạn
+
+Sequence diagram mô tả luồng huấn luyện progressive unfreezing:
+
+```mermaid
+sequenceDiagram
+    participant Init as Khoi tao mo hinh
+    participant S1 as Giai doan 1 Head Only
+    participant S2 as Giai doan 2 Unfreeze B5-B6
+    participant S3 as Giai doan 3 Full Fine-tune
+    participant Eval as Danh gia Test
+
+    Init->>S1: LR=1e-4, backbone dong bang
+    Note over S1: 30 epochs<br/>Val Acc: 86.63%<br/>Val Loss: 0.310
+    S1->>S2: Nap best_stage1.pth, LR=1e-5
+    Note over S2: 30 epochs<br/>Val Acc: 94.54%<br/>Val Loss: 0.138
+    S2->>S3: Nap best_stage2.pth, LR=1e-6
+    Note over S3: 30 epochs<br/>Val Acc: 97.34%<br/>Val Loss: 0.070
+    S3->>Eval: Nap best_stage3.pth
+    Note over Eval: Acc: 97.33%<br/>F1: 97.45%<br/>AUC: 99.70%
+```
+
 ## 4.2 Pipeline Tiền Xử Lý và Tăng Cường Dữ Liệu
 
 ### 4.2.1 Tiền Xử Lý Cơ Bản (Áp Dụng Cho Cả Ba Tập)

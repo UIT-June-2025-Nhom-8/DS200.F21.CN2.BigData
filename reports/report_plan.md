@@ -42,7 +42,7 @@ Template gốc có **7 chương chính** + Tài liệu tham khảo:
 
 **Nội dung cần viết:**
 - **Input:** Ảnh khuôn mặt đơn lẻ (RGB, kích thước bất kỳ sau resize).
-- **Output:** Nhãn nhị phân — `0 = fake` (AI-generated), `1 = real`.
+- **Output:** Nhãn nhị phân — `'Real'` (thật) hoặc `'Fake'` (AI-generated); mô hình ánh xạ `Real=0`, `Fake=1`.
 - Định nghĩa chính thức bài toán binary classification.
 - Ràng buộc thực tế: mô hình phải hoạt động với ảnh từ nhiều nguồn (StyleGAN, deepfake, GAN tổng quát, ciplab).
 - Metric đánh giá: Accuracy, Precision, Recall, F1-Score, AUC-ROC.
@@ -146,11 +146,11 @@ Template gốc có **7 chương chính** + Tài liệu tham khảo:
 | ciplab | `real-and-fake-face-detection/real_and_fake_face` | Mixed sources | GAN tổng hợp |
 
 *Quy trình hợp nhất:*
-- Suy ra nhãn từ tên thư mục: `real`, `Real`, `training_real` → label 1; `fake`, `Fake`, `training_fake` → label 0.
+- Suy ra nhãn từ tên thư mục: `real`, `Real`, `training_real` → `'Real'`; `fake`, `Fake`, `training_fake` → `'Fake'`.
 - Dedup bằng MD5 hash.
 - Kiểm tra phân bố lớp (xem `reports/class_balance.png`).
 - Phân chia stratified 70/15/15, `random_state=42` → lưu vào `data/splits/`.
-- Schema CSV: `image_path` (absolute path, string), `label` (int: 0=fake, 1=real).
+- Schema CSV: `image_path` (absolute path, string), `label` (chuỗi: `'Real'` hoặc `'Fake'`).
 
 *Thống kê kết quả hợp nhất:* [INSERT: tổng số ảnh train/val/test, tỷ lệ real:fake sau split — đọc từ `data/splits/train.csv` khi có]
 

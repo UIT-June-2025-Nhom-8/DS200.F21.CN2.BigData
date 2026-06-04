@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.24)  31 MAY 2026 01:21
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.24)  5 JUN 2026 00:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -708,6 +708,9 @@ Package: natbib 2010/09/13 8.31b (PWD, AO)
 LaTeX Info: Redefining \cite on input line 694.
 \c@NAT@ctr=\count344
 )
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/tools/indentfirst.sty
+Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
+)
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/microtype/microtype.sty
 Package: microtype 2025/02/11 v3.2a Micro-typographical refinements (RS)
 \MT@toks=\toks34
@@ -763,13 +766,339 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@count@id=\count353
 \enitdp@description=\count354
 )
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgfutil-comm
+on.tex
+\pgfutil@everybye=\toks38
+\pgfutil@tempdima=\dimen276
+\pgfutil@tempdimb=\dimen277
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgfutil-late
+x.def
+\pgfutil@abb=\box71
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.
+tex (/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/pgf.revision.tex)
+Package: pgfrcs 2023-01-15 v3.1.10 (3.1.10)
+))
+Package: pgf 2023-01-15 v3.1.10 (3.1.10)
+ (/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty 
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.cod
+e.tex
+Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code
+.tex
+\pgfkeys@pathtoks=\toks39
+\pgfkeys@temptoks=\toks40
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibra
+ryfiltered.code.tex
+\pgfkeys@tmptoks=\toks41
+))
+\pgf@x=\dimen278
+\pgf@y=\dimen279
+\pgf@xa=\dimen280
+\pgf@ya=\dimen281
+\pgf@xb=\dimen282
+\pgf@yb=\dimen283
+\pgf@xc=\dimen284
+\pgf@yc=\dimen285
+\pgf@xd=\dimen286
+\pgf@yd=\dimen287
+\w@pgf@writea=\write3
+\r@pgf@reada=\read2
+\c@pgf@counta=\count355
+\c@pgf@countb=\count356
+\c@pgf@countc=\count357
+\c@pgf@countd=\count358
+\t@pgf@toka=\toks42
+\t@pgf@tokb=\toks43
+\t@pgf@tokc=\toks44
+\pgf@sys@id@count=\count359
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
+File: pgf.cfg 2023-01-15 v3.1.10 (3.1.10)
+)
+Driver file for pgf: pgfsys-xetex.def
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-xet
+ex.def
+File: pgfsys-xetex.def 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-dvi
+pdfmx.def
+File: pgfsys-dvipdfmx.def 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-com
+mon-pdf.def
+File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
+)
+\pgfsys@objnum=\count360
+)))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoft
+path.code.tex
+File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfsyssoftpath@smallbuffer@items=\count361
+\pgfsyssoftpath@bigbuffer@items=\count362
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprot
+ocol.code.tex
+File: pgfsysprotocol.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.cod
+e.tex
+Package: pgfcore 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.
+tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathparser.cod
+e.tex
+\pgfmath@dimen=\dimen288
+\pgfmath@count=\count363
+\pgfmath@box=\box72
+\pgfmath@toks=\toks45
+\pgfmath@stack@operand=\toks46
+\pgfmath@stack@operation=\toks47
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+basic.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+trigonometric.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+random.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+comparison.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+base.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+round.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+misc.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.
+integerarithmetics.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.
+tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code
+.tex
+\c@pgfmathroundto@lastzeros=\count364
+))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoin
+ts.code.tex
+File: pgfcorepoints.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@picminx=\dimen289
+\pgf@picmaxx=\dimen290
+\pgf@picminy=\dimen291
+\pgf@picmaxy=\dimen292
+\pgf@pathminx=\dimen293
+\pgf@pathmaxx=\dimen294
+\pgf@pathminy=\dimen295
+\pgf@pathmaxy=\dimen296
+\pgf@xx=\dimen297
+\pgf@xy=\dimen298
+\pgf@yx=\dimen299
+\pgf@yy=\dimen300
+\pgf@zx=\dimen301
+\pgf@zy=\dimen302
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepath
+construct.code.tex
+File: pgfcorepathconstruct.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@path@lastx=\dimen303
+\pgf@path@lasty=\dimen304
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepath
+usage.code.tex
+File: pgfcorepathusage.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@shorten@end@additional=\dimen305
+\pgf@shorten@start@additional=\dimen306
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescop
+es.code.tex
+File: pgfcorescopes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfpic=\box73
+\pgf@hbox=\box74
+\pgf@layerbox@main=\box75
+\pgf@picture@serial@count=\count365
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregrap
+hicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgflinewidth=\dimen307
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretran
+sformations.code.tex
+File: pgfcoretransformations.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@pt@x=\dimen308
+\pgf@pt@y=\dimen309
+\pgf@pt@temp=\dimen310
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequic
+k.code.tex
+File: pgfcorequick.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobje
+cts.code.tex
+File: pgfcoreobjects.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepath
+processing.code.tex
+File: pgfcorepathprocessing.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearro
+ws.code.tex
+File: pgfcorearrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowsep=\dimen311
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshad
+e.code.tex
+File: pgfcoreshade.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@max=\dimen312
+\pgf@sys@shading@range@num=\count366
+\pgf@shadingcount=\count367
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimag
+e.code.tex
+File: pgfcoreimage.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexte
+rnal.code.tex
+File: pgfcoreexternal.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfexternal@startupbox=\box76
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelaye
+rs.code.tex
+File: pgfcorelayers.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretran
+sparency.code.tex
+File: pgfcoretransparency.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatt
+erns.code.tex
+File: pgfcorepatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.
+code.tex
+File: pgfcorerdf.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/modules/pgfmoduleshape
+s.code.tex
+File: pgfmoduleshapes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfnodeparttextbox=\box77
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.
+code.tex
+File: pgfmoduleplot.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-ve
+rsion-0-65.sty
+Package: pgfcomp-version-0-65 2023-01-15 v3.1.10 (3.1.10)
+\pgf@nodesepstart=\dimen313
+\pgf@nodesepend=\dimen314
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-ve
+rsion-1-18.sty
+Package: pgfcomp-version-1-18 2023-01-15 v3.1.10 (3.1.10)
+))
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code
+.tex)) (/usr/local/texlive/2025basic/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/utilities/pgffor.code.
+tex
+Package: pgffor 2023-01-15 v3.1.10 (3.1.10)
+\pgffor@iter=\dimen315
+\pgffor@skip=\dimen316
+\pgffor@stack=\toks48
+\pgffor@toks=\toks49
+))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tik
+z.code.tex
+Package: tikz 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/libraries/pgflibrarypl
+othandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@plot@mark@count=\count368
+\pgfplotmarksize=\dimen317
+)
+\tikz@lastx=\dimen318
+\tikz@lasty=\dimen319
+\tikz@lastxsaved=\dimen320
+\tikz@lastysaved=\dimen321
+\tikz@lastmovetox=\dimen322
+\tikz@lastmovetoy=\dimen323
+\tikzleveldistance=\dimen324
+\tikzsiblingdistance=\dimen325
+\tikz@figbox=\box78
+\tikz@figbox@bg=\box79
+\tikz@tempbox=\box80
+\tikz@tempbox@bg=\box81
+\tikztreelevel=\count369
+\tikznumberofchildren=\count370
+\tikznumberofcurrentchild=\count371
+\tikz@fig@count=\count372
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/modules/pgfmodulematri
+x.code.tex
+File: pgfmodulematrix.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfmatrixcurrentrow=\count373
+\pgfmatrixcurrentcolumn=\count374
+\pgf@matrix@numberofcolumns=\count375
+)
+\tikz@expandcount=\count376
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/frontendlayer/tikz/lib
+raries/tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/libraries/pgflibraryar
+rows.meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowinset=\dimen326
+\pgfarrowlength=\dimen327
+\pgfarrowwidth=\dimen328
+\pgfarrowlinewidth=\dimen329
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/frontendlayer/tikz/lib
+raries/tikzlibraryshapes.geometric.code.tex
+File: tikzlibraryshapes.geometric.code.tex 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/libraries/shapes/pgfli
+braryshapes.geometric.code.tex
+File: pgflibraryshapes.geometric.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/frontendlayer/tikz/lib
+raries/tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/frontendlayer/tikz/lib
+raries/tikzlibraryfit.code.tex
+File: tikzlibraryfit.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pgf/frontendlayer/tikz/lib
+raries/tikzlibrarybackgrounds.code.tex
+File: tikzlibrarybackgrounds.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@layerbox@background=\box82
+\pgf@layerboxsaved@background=\box83
+)
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'polyglossia' package.
 Package csquotes Info: Adjusting default style.
 
 
 Package csquotes Warning: No style for language 'vietnamese'.
-(csquotes)                Using fallback style on input line 160.
+(csquotes)                Using fallback style on input line 165.
 
 Package csquotes Info: Redefining alias 'default' -> 'fallback'.
 
@@ -779,26 +1108,26 @@ LaTeX Warning: Unused global option(s):
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 160.
-LaTeX Font Info:    ... okay on input line 160.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 165.
+LaTeX Font Info:    ... okay on input line 165.
 
 Package fontspec Info: 
 (fontspec)             Adjusting the maths setup (use [no-math] to avoid
@@ -806,65 +1135,65 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 160.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 160.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 160.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 160.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 160.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 160.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 160.
-LaTeX Font Info:    Redeclaring math accent \check on input line 160.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 160.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 160.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 160.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 160.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 160.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 165.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 165.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 165.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 165.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 165.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 165.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 165.
+LaTeX Font Info:    Redeclaring math accent \check on input line 165.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 165.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 165.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 165.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 165.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 165.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 160.
+(Font)              `operators' in the math version `normal' on input line 165.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> TU/TimesNewRoman(0)/m/n on input line 1
-60.
+65.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 160.
+(Font)              `operators' in the math version `bold' on input line 165.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
 (Font)                  OT1/cmr/bx/n --> TU/TimesNewRoman(0)/m/n on input line 
-160.
+165.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  TU/TimesNewRoman(0)/m/n --> TU/TimesNewRoman(0)/m/n on 
-input line 160.
+input line 165.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
 (Font)                  OT1/cmr/m/it --> TU/TimesNewRoman(0)/m/it on input line
- 160.
+ 165.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
 (Font)                  OT1/cmr/bx/n --> TU/TimesNewRoman(0)/b/n on input line 
-160.
+165.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/Arial(0)/m/n on input line 160.
+(Font)                  OT1/cmss/m/n --> TU/Arial(0)/m/n on input line 165.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/CourierNew(0)/m/n on input line 160
+(Font)                  OT1/cmtt/m/n --> TU/CourierNew(0)/m/n on input line 165
 .
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
 (Font)                  TU/TimesNewRoman(0)/m/n --> TU/TimesNewRoman(0)/b/n on 
-input line 160.
+input line 165.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> TU/TimesNewRoman(0)/b/it on input lin
-e 160.
+e 165.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/Arial(0)/b/n on input line 160.
+(Font)                  OT1/cmss/bx/n --> TU/Arial(0)/b/n on input line 165.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/CourierNew(0)/b/n on input line 160
+(Font)                  OT1/cmtt/m/n --> TU/CourierNew(0)/b/n on input line 165
 .
 
 *geometry* driver: auto-detecting
@@ -905,15 +1234,15 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
-\c@lstlisting=\count355
-Package hyperref Info: Link coloring ON on input line 160.
-LaTeX Info: Redefining \microtypecontext on input line 160.
-Package microtype Info: Applying patch `item' on input line 160.
-Package microtype Info: Applying patch `toc' on input line 160.
-Package microtype Info: Applying patch `eqnum' on input line 160.
-Package microtype Info: Applying patch `footnote' on input line 160.
-Package microtype Info: Applying patch `verbatim' on input line 160.
-LaTeX Info: Redefining \microtypesetup on input line 160.
+\c@lstlisting=\count377
+Package hyperref Info: Link coloring ON on input line 165.
+LaTeX Info: Redefining \microtypecontext on input line 165.
+Package microtype Info: Applying patch `item' on input line 165.
+Package microtype Info: Applying patch `toc' on input line 165.
+Package microtype Info: Applying patch `eqnum' on input line 165.
+Package microtype Info: Applying patch `footnote' on input line 165.
+Package microtype Info: Applying patch `verbatim' on input line 165.
+LaTeX Info: Redefining \microtypesetup on input line 165.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: No adjustment of tracking.
@@ -923,7 +1252,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `TimesNewRoman' (encoding: TU).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 184
+LaTeX Font Info:    Trying to load font information for U+msa on input line 189
 .
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -931,7 +1260,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 184
+LaTeX Font Info:    Trying to load font information for U+msb on input line 189
 .
 
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -959,29 +1288,33 @@ umentations
 
 [1
 
+]
+
+[2])
+\tf@toc=\write4
+\openout4 = `main.toc'.
+
+
+
+[3] (./main.lot)
+\tf@lot=\write5
+\openout5 = `main.lot'.
+
+ (./main.lof
+
+[4
+
 ])
-\tf@toc=\write3
-\openout3 = `main.toc'.
+\tf@lof=\write6
+\openout6 = `main.lof'.
 
 
 
-[2] (./main.lot)
-\tf@lot=\write4
-\openout4 = `main.lot'.
-
- (./main.lof)
-\tf@lof=\write5
-\openout5 = `main.lof'.
-
-
-
-[3
-
-] (./chapters/ch01_gioithieu.tex
+[5] (./chapters/ch01_gioithieu.tex
 Chương 1.
 
 
-[4
+[6
 
 
 ]
@@ -991,16 +1324,45 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `CourierNew' (encoding: TU).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-) (./chapters/ch02_nghiencuulienquan.tex
 
-[5]
+
+[7]) (./chapters/ch02_nghiencuulienquan.tex
+
+[8]
 Chương 2.
 
 
-[6
+[9
 
 ]
-Overfull \hbox (3.90208pt too wide) in paragraph at lines 42--43
+Underfull \hbox (badness 5374) in paragraph at lines 53--53
+[]|\TU/TimesNewRoman(0)/m/n/10 Video, 1,8M frame, 4
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--53
+[]|\TU/TimesNewRoman(0)/m/n/10 5.639 video deepfake
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--53
+[]|\TU/TimesNewRoman(0)/m/n/10 Fairness benchmark
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--53
+[]|\TU/TimesNewRoman(0)/m/n/10 Sanity check, nhiều
+ []
+
+
+Underfull \hbox (badness 5316) in paragraph at lines 53--53
+[]|\TU/TimesNewRoman(0)/b/n/10 316.530 ảnh, 4 GAN
+ []
+
+
+
+[10]
+Overfull \hbox (3.90208pt too wide) in paragraph at lines 69--70
 []\TU/TimesNewRoman(0)/b/n/10 Đánh giá robustness với nhiễu thực tế: \TU/TimesN
 ewRoman(0)/m/n/10 Kiểm tra JPEG compression ($\OML/cmm/m/it/10 q \OT1/cmr/m/n/1
 0 = 70/50/30$\TU/TimesNewRoman(0)/m/n/10 ), downscale (50%/25%)
@@ -1008,79 +1370,85 @@ ewRoman(0)/m/n/10 Kiểm tra JPEG compression ($\OML/cmm/m/it/10 q \OT1/cmr/m/n/
 
 ) (./chapters/ch03_bodulieau.tex
 
-[7]
+[11]
 Chương 3.
 
 Overfull \hbox (10.67429pt too wide) in paragraph at lines 24--24
 []|\TU/CourierNew(0)/m/n/10 real-and-fake-face-detection/| 
  []
 
+LaTeX Font Info:    Font shape `TU/CourierNew(0)/m/n' will be
+(Font)              scaled to size 8.09995pt on input line 63.
+LaTeX Font Info:    Font shape `TU/CourierNew(0)/m/n' will be
+(Font)              scaled to size 7.19995pt on input line 66.
 
 
-[8
+[12
 
 ]
 File: ../eda/assets/eda_class_distribution.png Graphic file (type bmp)
 <../eda/assets/eda_class_distribution.png>
+
+
+[13]
 File: ../eda/assets/eda_resolution.png Graphic file (type bmp)
 <../eda/assets/eda_resolution.png>
-
-
-[9]
 File: ../eda/assets/eda_pixel_stats.png Graphic file (type bmp)
 <../eda/assets/eda_pixel_stats.png>
+
+
+[14]
 File: ../eda/assets/eda_sample_grid.png Graphic file (type bmp)
 <../eda/assets/eda_sample_grid.png>
-
-
-[10]
 File: ../eda/assets/eda_fft.png Graphic file (type bmp)
 <../eda/assets/eda_fft.png>
 
 
-[11]) (./chapters/ch04_phuongphap.tex
+[15]) (./chapters/ch04_phuongphap.tex
 
-[12]
+[16]
 Chương 4.
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 9.
-LaTeX Font Info:    Font shape `TU/CourierNew(0)/m/n' will be
-(Font)              scaled to size 8.09995pt on input line 9.
 LaTeX Font Info:    Font shape `TU/CourierNew(0)/b/n' will be
 (Font)              scaled to size 8.09995pt on input line 10.
 LaTeX Font Info:    Font shape `TU/CourierNew(0)/m/it' will be
 (Font)              scaled to size 8.09995pt on input line 14.
 
 
-[13
+[17
 
 ]
 
-[14]
-Underfull \hbox (badness 10000) in paragraph at lines 142--142
+[18]
+
+[19]
+Underfull \hbox (badness 10000) in paragraph at lines 246--246
 []|\TU/TimesNewRoman(0)/m/n/10 brightness_limit=0,2;
  []
 
 
 
-[15]
-Overfull \hbox (5.31622pt too wide) in paragraph at lines 188--189
+[20]
+Overfull \hbox (5.31622pt too wide) in paragraph at lines 292--293
 []\TU/TimesNewRoman(0)/b/n/10 Mixed-precision training (FP16): \TU/TimesNewRoma
 n(0)/m/n/10 Được bật bằng \TU/CourierNew(0)/m/n/10 torch.cuda.amp.autocast() \T
 U/TimesNewRoman(0)/m/n/10 kết hợp \TU/CourierNew(0)/m/n/10 GradScaler\TU/TimesN
 ewRoman(0)/m/n/10 ,
  []
 
-) (./chapters/ch05_thucnghiem.tex
 
-[16]
+
+[21]) (./chapters/ch05_thucnghiem.tex
+
+[22]
 Chương 5.
 
 
-[17
+[23
 
 ]
 Overfull \hbox (8.49207pt too wide) in paragraph at lines 74--75
@@ -1095,22 +1463,26 @@ File: ../../artifacts/results/roc_curve.png Graphic file (type bmp)
 <../../artifacts/results/roc_curve.png>
 
 
-[18]
+[24]
 File: ../../artifacts/results/training_curves.png Graphic file (type bmp)
 <../../artifacts/results/training_curves.png>
 
 
-[19]
+[25]
 
-[20]
+[26]
 File: ../../artifacts/results/../gradcam/gradcam_grid.png Graphic file (type bm
 p)
 <../../artifacts/results/../gradcam/gradcam_grid.png>
 
 
-[21]) (./chapters/ch06_ketluan.tex
+[27]
 
-[22]
+[28]
+
+[29]) (./chapters/ch06_ketluan.tex
+
+[30]
 Chương 6.
 
 Overfull \hbox (3.90208pt too wide) in paragraph at lines 18--19
@@ -1119,17 +1491,29 @@ ewRoman(0)/m/n/10 Kiểm tra JPEG compression ($\OML/cmm/m/it/10 q \OT1/cmr/m/n/
 0 = 70/50/30$\TU/TimesNewRoman(0)/m/n/10 ), downscale (50%/25%)
  []
 
-) (./chapters/ch07_huongphattrien.tex
 
-[23
+
+[31
+
+]) (./chapters/ch07_huongphattrien.tex
+
+[32]
+Chương 7.
+
+
+[33
 
 ]
-Chương 7.
+Overfull \hbox (26.10649pt too wide) in paragraph at lines 44--45
+\OT1/cmr/m/n/10 13$ \TU/TimesNewRoman(0)/m/n/10 MB) với mức giảm accuracy thườn
+g $\OML/cmm/m/it/10 < \OT1/cmr/m/n/10 1[]$ \TU/TimesNewRoman(0)/m/n/10 trên Eff
+icientNet-B0. Triển khai dễ dàng qua \TU/CourierNew(0)/m/n/10 torch.quantizatio
+n\TU/TimesNewRoman(0)/m/n/10 . 
+ []
+
 ) (./main.bbl
 
-[24
-
-]
+[34]
 Underfull \hbox (badness 1314) in paragraph at lines 58--63
 \TU/TimesNewRoman(0)/m/n/10 FaceForensics++: Learning to detect manipulated fac
 ial images.  In \TU/TimesNewRoman(0)/m/it/10 Proceedings of the IEEE/CVF
@@ -1137,7 +1521,7 @@ ial images.  In \TU/TimesNewRoman(0)/m/it/10 Proceedings of the IEEE/CVF
 
 )
 
-[25
+[35
 
 ] (./main.aux)
  ***********
@@ -1146,12 +1530,12 @@ L3 programming layer <2025-01-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 22226 strings out of 475366
- 416656 string characters out of 5762339
- 1147033 words of memory out of 5000000
- 44825 multiletter control sequences out of 15000+600000
- 564470 words of font info for 116 fonts, out of 8000000 for 9000
+ 33681 strings out of 475366
+ 670751 string characters out of 5762339
+ 1397960 words of memory out of 5000000
+ 56049 multiletter control sequences out of 15000+600000
+ 564486 words of font info for 118 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 79i,13n,93p,1001b,1918s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,93p,1001b,1387s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (26 pages).
+Output written on main.pdf (36 pages).

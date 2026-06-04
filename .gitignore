@@ -25,3 +25,17 @@ venv312/
 
 # Cache EDA — tái tạo được bằng cách chạy lại notebooks/02_eda.ipynb
 reports/eda/assets/duplicate_hashes.parquet
+
+# LaTeX build artifacts — tái tạo được bằng make
+reports/latex/*.aux
+reports/latex/*.bbl
+reports/latex/*.bcf
+reports/latex/*.blg
+reports/latex/*.fdb_latexmk
+reports/latex/*.fls
+reports/latex/*.lof
+reports/latex/*.log
+reports/latex/*.lot
+reports/latex/*.out
+reports/latex/*.run.xml
+reports/latex/*.toc

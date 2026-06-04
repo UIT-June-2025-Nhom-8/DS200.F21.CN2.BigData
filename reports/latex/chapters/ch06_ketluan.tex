@@ -19,3 +19,40 @@
 
   \item \textbf{Explainability qua Grad-CAM:} Cung cấp bằng chứng trực quan về vùng ảnh mô hình tập trung khi phân loại, tăng tính minh bạch và hỗ trợ tin cậy hóa hệ thống AI trong ứng dụng thực tế.
 \end{enumerate}
+
+\section{Bài Học Kinh Nghiệm}
+
+Quá trình thực hiện đề tài rút ra một số bài học kinh nghiệm có giá trị cho các dự án deep learning tương tự:
+
+\begin{table}[H]
+  \centering
+  \caption{Bài học kinh nghiệm từ quá trình thực hiện đề tài}
+  \label{tab:lessons}
+  \begin{tabularx}{\linewidth}{lX}
+    \toprule
+    \textbf{Lĩnh vực} & \textbf{Bài học} \\
+    \midrule
+    Dữ liệu & MD5 dedup là bước bắt buộc khi hợp nhất nhiều nguồn Kaggle --- các bộ dữ liệu công khai thường có phần chồng lấp không được ghi rõ trong tài liệu, gây rò rỉ dữ liệu tiềm ẩn. \\
+    Huấn luyện & Với tập >200k ảnh và VRAM 12GB, batch\_size=128 + FP16 là điểm cân bằng tốt nhất; tăng lên 256 gây OOM, giảm xuống 64 làm gradient estimate kém ổn định hơn. \\
+    Đánh giá & AUC-ROC tin cậy hơn Accuracy khi phân bố nhãn không hoàn toàn cân bằng; luôn báo cáo cả hai. Cross-generator evaluation cung cấp thông tin thực tế hơn in-distribution test. \\
+    Explainability & Grad-CAM là công cụ gỡ lỗi hiệu quả: heatmap phân tán trên ciplab chỉ ngay ra vấn đề domain mismatch trước khi cần phân tích số liệu chi tiết. \\
+    Reproducibility & Quản lý siêu tham số qua YAML + seed cố định là đầu tư nhỏ nhưng tiết kiệm nhiều thời gian khi cần tái chạy hoặc so sánh cấu hình khác nhau. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Hạn Chế Của Đề Tài}
+
+Đề tài có một số hạn chế cần được thừa nhận rõ ràng để định hướng đúng cho các nghiên cứu tiếp theo:
+
+\begin{enumerate}
+  \item \textbf{Thiếu ảnh từ diffusion models thế hệ mới:} Tập dữ liệu không bao gồm ảnh từ Stable Diffusion, Midjourney, DALL-E~3 --- các generator này ngày càng phổ biến và tạo ra artifact khác GAN về cấu trúc tần số. Kết quả đề tài không thể suy luận sang các generator này.
+
+  \item \textbf{Sụp đổ hoàn toàn trên ciplab holdout:} AUC-ROC 53,44\% khi holdout ciplab là điểm yếu nghiêm trọng. Nguyên nhân gốc là ciplab GAN tạo ra phân bố artifact nằm hoàn toàn ngoài vùng học được từ ba nguồn còn lại --- giải pháp cần bổ sung dữ liệu ciplab vào tập huấn luyện.
+
+  \item \textbf{Nhạy cảm với nén JPEG:} Suy giảm $\approx 15$ điểm phần trăm accuracy tại JPEG $q=70$ đáng lo ngại cho triển khai trên ảnh chia sẻ qua mạng xã hội. Cần bổ sung \texttt{ImageCompression} augmentation.
+
+  \item \textbf{Chỉ xử lý ảnh tĩnh:} Video deepfake --- trường hợp sử dụng phổ biến và nguy hiểm hơn --- nằm ngoài phạm vi đề tài.
+
+  \item \textbf{EarlyStopping không kích hoạt:} Tất cả ba giai đoạn chạy hết 30 epochs, gợi ý mô hình có thể cải thiện thêm nếu tăng \texttt{max\_epochs\_per\_stage}.
+\end{enumerate}

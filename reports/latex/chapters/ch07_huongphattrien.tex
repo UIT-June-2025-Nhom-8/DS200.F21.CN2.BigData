@@ -1,25 +1,70 @@
 \chapter{HƯỚNG PHÁT TRIỂN ĐỀ TÀI}
 
-Dựa trên kết quả thực nghiệm và các giới hạn được xác định trong quá trình nghiên cứu, sáu hướng phát triển được đề xuất:
+Dựa trên kết quả thực nghiệm và các giới hạn được xác định, sáu hướng phát triển được đề xuất kèm phân tích kỹ thuật và mức độ ưu tiên.
+
+\section{Mở Rộng Sang Ảnh Từ Diffusion Models Thế Hệ Mới}
+
+\textbf{Ưu tiên: Cao nhất.} Tập dữ liệu hiện tại chủ yếu bao gồm ảnh GAN (StyleGAN2, manipulation-based). Các mô hình khuếch tán (Stable Diffusion, Midjourney, DALL-E~3) tạo ra artifact hoàn toàn khác về cấu trúc tần số --- quá trình sinh ảnh theo từng bước khử nhiễu tạo ra phân bố năng lượng tần số khác biệt so với quá trình sinh GAN một bước. Mở rộng tập huấn luyện với ảnh từ các generator này --- theo hướng của GenImage~\cite{zhu2023genimage} và AI-Face~\cite{lin2025aiface} --- là bước cần thiết để duy trì hiệu suất thực tế trước làn sóng công cụ sinh ảnh mới.
+
+\textbf{Gợi ý triển khai:} Thu thập thêm ít nhất 50.000 ảnh từ Stable Diffusion v2/SDXL và Midjourney v6 qua các bộ dữ liệu công khai (ArtiFact, GenImage~\cite{zhu2023genimage}). Huấn luyện lại từ Giai đoạn~2 (partial unfreeze) với tập dữ liệu mở rộng, thay vì từ đầu, để tận dụng đặc trưng đã học từ GAN.
+
+\section{Thử Nghiệm Kiến Trúc Backbone Mạnh Hơn}
+
+EfficientNet-B0 đạt kết quả tốt nhờ cân bằng giữa tốc độ và độ chính xác. Các kiến trúc backbone tiềm năng cho nghiên cứu tiếp theo được trình bày trong Bảng~\ref{tab:future_backbones}.
+
+\begin{table}[H]
+  \centering
+  \caption{Các kiến trúc backbone tiềm năng cho nghiên cứu tiếp theo}
+  \label{tab:future_backbones}
+  \begin{tabularx}{\linewidth}{lXrl}
+    \toprule
+    \textbf{Kiến trúc} & \textbf{Ưu điểm chính} & \textbf{Tham số} & \textbf{Độ phức tạp} \\
+    \midrule
+    EfficientNet-B4 & Cùng họ với B0, dễ thay thế; độ chính xác cao hơn đáng kể & $\approx$19M & Thấp \\
+    ConvNeXt-T & Kiến trúc CNN hiện đại, thiết kế lại theo cảm hứng ViT & $\approx$28M & Thấp \\
+    ViT-B/16 & Attention toàn cục; bắt được artifact phân tán không gian & $\approx$86M & Trung bình \\
+    CLIP-ViT-B/32 & Pretrained trên 400M cặp ảnh--văn bản; đặc trưng ngữ nghĩa phong phú & $\approx$151M & Cao \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+ViT-B/16 đặc biệt thú vị vì cơ chế self-attention toàn cục có thể phát hiện artifact không cục bộ --- loại artifact mà CNN với receptive field giới hạn có thể bỏ qua. Tuy nhiên, ViT yêu cầu lượng dữ liệu lớn hơn để tránh overfitting và thời gian fine-tuning dài hơn.
+
+\section{Phát Hiện Deepfake Trong Video}
+
+Pipeline hiện tại xử lý ảnh tĩnh đơn lẻ. Mở rộng sang video đòi hỏi mô hình hóa tính nhất quán thời gian (temporal consistency): khuôn mặt deepfake trong video thường có nhấp nháy (flickering) hoặc không nhất quán giữa các frame liên tiếp về màu sắc, ánh sáng hoặc hướng nhìn. Kiến trúc tiếp cận tự nhiên là kết hợp CNN (trích xuất đặc trưng từng frame) với LSTM hoặc Transformer (mô hình hóa chuỗi frame).
+
+\textbf{Gợi ý triển khai cụ thể:} Sử dụng EfficientNet-B0 đã fine-tuned (Stage~3) làm feature extractor đóng băng, thêm một Transformer encoder 2--4 lớp trên chuỗi feature vector từ các frame liên tiếp (cửa sổ trượt 16--32 frame). Cách này tận dụng checkpoint đã có mà không cần huấn luyện lại backbone.
+
+\section{Tối Ưu Hóa Cho Triển Khai Thực Tế}
+
+Mô hình Stage~3 hiện có kích thước 52,5~MB và yêu cầu GPU để đạt tốc độ xử lý thời gian thực. Các kỹ thuật nén mô hình được đề xuất theo thứ tự độ phức tạp tăng dần:
 
 \begin{enumerate}
+  \item \textbf{Post-training quantization INT8:} Chuyển trọng số từ FP32 sang INT8, giảm kích thước $\approx 4\times$ (xuống $\approx 13$~MB) với mức giảm accuracy thường $< 1\%$ trên EfficientNet-B0. Triển khai dễ dàng qua \texttt{torch.quantization}.
 
-  \item \textbf{Mở rộng sang ảnh từ diffusion models thế hệ mới.}
-  Tập dữ liệu hiện tại chủ yếu bao gồm ảnh GAN (StyleGAN2, manipulation-based). Các mô hình khuếch tán (Stable Diffusion, Midjourney, DALL-E~3) tạo ra artifact hoàn toàn khác về cấu trúc tần số. Mở rộng tập huấn luyện với ảnh từ các generator này --- theo hướng của GenImage \cite{zhu2023genimage} và AI-Face \cite{lin2025aiface} --- là bước cần thiết để duy trì hiệu suất trước làn sóng công cụ sinh ảnh mới.
+  \item \textbf{Knowledge distillation:} Huấn luyện EfficientNet-Lite0 (student, $\approx 4$~MB) học xác suất mềm từ Stage~3 (teacher). EfficientNet-Lite0 được tối ưu cho mobile với inference engine TFLite và CoreML.
 
-  \item \textbf{Thử nghiệm kiến trúc backbone mạnh hơn.}
-  EfficientNet-B0 đạt kết quả tốt nhờ cân bằng giữa tốc độ và độ chính xác. Các hướng mở rộng đáng thử: EfficientNet-B4/B7 (cùng họ, độ sâu cao hơn), Vision Transformer (ViT-B/16) với cơ chế attention toàn cục có thể bắt được artifact phân tán không gian, và hybrid architectures kết hợp CNN với attention.
-
-  \item \textbf{Phát hiện deepfake trong video.}
-  Pipeline hiện tại xử lý ảnh tĩnh đơn lẻ. Mở rộng sang video đòi hỏi mô hình hóa tính nhất quán thời gian (temporal consistency): khuôn mặt deepfake trong video thường có nhấp nháy (flickering) hoặc không nhất quán giữa các frame liên tiếp. Kiến trúc LSTM hoặc Transformer trên chuỗi frame là hướng tiếp cận tự nhiên.
-
-  \item \textbf{Tối ưu hóa cho triển khai thực tế.}
-  Mô hình Stage~3 hiện có kích thước 52,5 MB --- phù hợp cho server nhưng nặng cho thiết bị biên. Các kỹ thuật nén mô hình (quantization INT8, structured pruning, knowledge distillation sang EfficientNet-Lite) có thể giảm kích thước 4--8 lần với mức giảm hiệu suất tối thiểu.
-
-  \item \textbf{Đánh giá robustness với adversarial examples.}
-  Bài kiểm tra robustness hiện tại giới hạn ở nhiễu tự nhiên (JPEG, blur). Trong kịch bản tấn công có chủ đích, kẻ xấu có thể tạo perturbation tối thiểu (FGSM, PGD, C\&W) để đánh lừa mô hình phân loại ảnh giả thành thật. Đánh giá adversarial robustness và adversarial training là bước quan trọng để hardening hệ thống cho ứng dụng bảo mật thực tế.
-
-  \item \textbf{Tích hợp cơ chế xác thực nguồn gốc ảnh (C2PA).}
-  Hướng tiếp cận phát hiện dựa trên đặc trưng thị giác luôn là cuộc chạy đua vũ trang với các generator ngày càng tốt hơn. Kết hợp với chuẩn C2PA (Coalition for Content Provenance and Authenticity) --- gắn metadata chứng thực nguồn gốc vào ảnh tại thời điểm chụp --- tạo ra cơ chế phòng thủ bổ sung và bền vững hơn về lâu dài.
-
+  \item \textbf{Structured pruning:} Loại bỏ các kênh đặc trưng ít quan trọng theo gradient-based importance score; giảm FLOPS 30--50\% với mức giảm accuracy $< 2\%$. Kết hợp với fine-tuning sau pruning (iterative pruning) cho kết quả tốt hơn one-shot pruning.
 \end{enumerate}
+
+\section{Đánh Giá Robustness Với Adversarial Examples}
+
+Bài kiểm tra robustness hiện tại giới hạn ở nhiễu tự nhiên (JPEG, blur, downscale). Trong kịch bản tấn công có chủ đích, kẻ xấu có thể tạo perturbation tối thiểu $\delta$ ($\|\delta\|_\infty \leq \varepsilon$) để đánh lừa mô hình phân loại ảnh giả thành thật. Công thức tổng quát:
+\begin{equation}
+  \mathbf{x}^* = \mathbf{x} + \delta, \quad \|\delta\|_\infty \leq \varepsilon, \quad f(\mathbf{x}^*) \neq f(\mathbf{x})
+  \label{eq:adversarial}
+\end{equation}
+
+Các phương pháp tấn công chuẩn gồm: FGSM (Fast Gradient Sign Method --- tấn công một bước), PGD (Projected Gradient Descent --- tấn công nhiều bước mạnh hơn) và C\&W (Carlini \& Wagner --- tìm perturbation nhỏ nhất). Adversarial training --- huấn luyện mô hình trên cả ảnh gốc lẫn ảnh adversarial theo phân phối min-max --- là biện pháp phòng thủ hiệu quả nhất hiện tại, mặc dù có thể làm giảm nhẹ accuracy trên ảnh sạch (tradeoff clean-accuracy vs.\ robust-accuracy).
+
+\section{Tích Hợp Cơ Chế Xác Thực Nguồn Gốc Ảnh (C2PA)}
+
+Hướng tiếp cận phát hiện dựa trên đặc trưng thị giác (như đề tài này) luôn là cuộc chạy đua vũ trang với các generator ngày càng tốt hơn. Kết hợp với chuẩn C2PA (Coalition for Content Provenance and Authenticity) tạo ra cơ chế phòng thủ hai lớp bổ sung cho nhau:
+
+\begin{itemize}
+  \item \textbf{Lớp 1 --- C2PA metadata:} Camera và phần mềm chỉnh sửa được chứng nhận gắn chữ ký số vào metadata ảnh tại thời điểm chụp/tạo. Metadata này có thể xác minh nguồn gốc mà không cần phân tích nội dung.
+  \item \textbf{Lớp 2 --- Phân tích đặc trưng thị giác:} Mô hình học sâu (như đề tài này) phân tích artifact trong nội dung ảnh, không phụ thuộc vào metadata.
+\end{itemize}
+
+Hai lớp bổ sung cho nhau vì metadata có thể bị giả mạo hoặc xóa (C2PA không chống được mọi tấn công), trong khi phân tích thị giác có thể bị đánh lừa bởi generator mới. Hệ thống kết hợp hai lớp --- chỉ tin tưởng ảnh khi \textit{cả hai} lớp xác nhận --- cung cấp bảo vệ bền vững hơn bất kỳ lớp đơn lẻ nào.

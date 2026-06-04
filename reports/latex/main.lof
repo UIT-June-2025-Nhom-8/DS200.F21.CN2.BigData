@@ -1,15 +1,20 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố số lượng ảnh thật và giả theo từng nguồn dữ liệu}}{9}{figure.caption.4}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố độ phân giải và tỷ lệ khung hình của tập dữ liệu}}{10}{figure.caption.6}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces \xpg@aux {}{vietnamese}Thống kê cường độ pixel R/G/B theo nguồn dữ liệu}}{10}{figure.caption.7}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces \xpg@aux {}{vietnamese}Lưới ảnh mẫu: ảnh thật (viền xanh lá) và ảnh giả (viền đỏ) theo từng nguồn}}{11}{figure.caption.8}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{vietnamese}Phân tích phổ FFT: phổ trung bình của ảnh thật (trái), ảnh giả (giữa) và hiệu phổ (phải)}}{11}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces \xpg@aux {}{vietnamese}Quy trình hợp nhất và chuẩn bị bộ dữ liệu từ bốn nguồn Kaggle}}{13}{figure.caption.5}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố số lượng ảnh thật và giả theo từng nguồn dữ liệu}}{14}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces \xpg@aux {}{vietnamese}Phân bố độ phân giải và tỷ lệ khung hình của tập dữ liệu}}{14}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces \xpg@aux {}{vietnamese}Thống kê cường độ pixel R/G/B theo nguồn dữ liệu}}{15}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{vietnamese}Lưới ảnh mẫu: ảnh thật (viền xanh lá) và ảnh giả (viền đỏ) theo từng nguồn}}{15}{figure.caption.11}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces \xpg@aux {}{vietnamese}Phân tích phổ FFT: phổ trung bình của ảnh thật (trái), ảnh giả (giữa) và hiệu phổ (phải)}}{16}{figure.caption.12}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces \xpg@aux {}{vietnamese}Kiến trúc tổng thể mô hình EfficientNet-B0 với classification head tùy chỉnh. Cam: EfficientNet-B0 backbone pretrained. Xanh lá: custom classification head.}}{19}{figure.caption.16}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces \xpg@aux {}{vietnamese}Sơ đồ chiến lược huấn luyện 3 giai đoạn progressive unfreezing và kết quả từng giai đoạn}}{20}{figure.caption.19}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả đánh giá trên tập kiểm tra}}{19}{figure.caption.22}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{vietnamese}Đường cong val\_loss và val\_accuracy theo epoch của 3 giai đoạn huấn luyện}}{19}{figure.caption.23}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{vietnamese}Grid Grad-CAM overlay 32 ảnh mẫu (4 nguồn $\times $ 4 Real + 4 Fake). Tiêu đề xanh lá = dự đoán đúng, đỏ = sai.}}{21}{figure.caption.26}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{vietnamese}Kết quả đánh giá trên tập kiểm tra}}{25}{figure.caption.28}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{vietnamese}Đường cong val\_loss và val\_accuracy theo epoch của 3 giai đoạn huấn luyện}}{25}{figure.caption.29}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{vietnamese}Sơ đồ quy trình đánh giá cross-generator (hold-out từng bộ dữ liệu). Ô đỏ đậm: bộ ciplab gây sụp đổ hoàn toàn khi bị giữ lại.}}{26}{figure.caption.30}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces \xpg@aux {}{vietnamese}Grid Grad-CAM overlay 32 ảnh mẫu (4 nguồn $\times $ 4 Real + 4 Fake). Tiêu đề xanh lá = dự đoán đúng, đỏ = sai.}}{28}{figure.caption.33}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces \xpg@aux {}{vietnamese}Pipeline inference phân loại ảnh mới (ngưỡng mặc định 0,5)}}{30}{figure.caption.35}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
