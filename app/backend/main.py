@@ -28,7 +28,7 @@ from inference import (
 
 _state: dict = {}
 
-ALLOWED_MIME = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+ALLOWED_MIME = {"image/jpeg", "image/png", "image/webp"}
 MAX_FILE_BYTES = 10 * 1024 * 1024  # 10 MB
 
 # ── Lifespan (load model once at startup) ─────────────────────────────────
@@ -41,15 +41,16 @@ async def lifespan(app: FastAPI):
     if not CHECKPOINT_PATH.exists():
         raise RuntimeError(f"Checkpoint not found: {CHECKPOINT_PATH}")
 
-    model = load_model(CHECKPOINT_PATH, device)
+    model, transform = load_model(CHECKPOINT_PATH, device)
     gradcam = GradCAM(model)
 
-    _state["device"]  = device
-    _state["model"]   = model
-    _state["gradcam"] = gradcam
+    _state["device"]     = device
+    _state["model"]      = model
+    _state["gradcam"]    = gradcam
+    _state["transform"]  = transform
 
     print(f"[FaceGuard] Model loaded: {CHECKPOINT_PATH.name}")
-    print(f"[FaceGuard] Ready at    : http://localhost:8000")
+    print(f"[FaceGuard] Ready at    : http://localhost:8001")
     yield
     _state.clear()
 
@@ -119,6 +120,7 @@ async def predict(
             model=_state["model"],
             gradcam=_state["gradcam"],
             device=_state["device"],
+            transform=_state["transform"],
             include_gradcam=gradcam,
         )
     except Exception as e:

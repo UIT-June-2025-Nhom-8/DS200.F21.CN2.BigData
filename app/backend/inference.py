@@ -32,14 +32,6 @@ from model import FaceDetectionModel  # noqa: E402
 
 CHECKPOINT_PATH = ROOT / "artifacts/checkpoints/best_stage3.pth"
 IMAGE_SIZE = 224
-IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD  = [0.229, 0.224, 0.225]
-
-TRANSFORM = A.Compose([
-    A.Resize(IMAGE_SIZE, IMAGE_SIZE),
-    A.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
-    ToTensorV2(),
-])
 
 # ── Device ───────────────────────────────────────────────────────────────────
 
@@ -52,7 +44,22 @@ def get_device() -> torch.device:
 
 # ── Model loader ─────────────────────────────────────────────────────────────
 
-def load_model(checkpoint_path: Path, device: torch.device) -> FaceDetectionModel:
+def build_transform(model: FaceDetectionModel) -> A.Compose:
+    """Build preprocessing transform using normalization stats from model.backbone.pretrained_cfg."""
+    cfg = getattr(model.backbone, "pretrained_cfg", None) or getattr(model.backbone, "default_cfg", {})
+    if hasattr(cfg, "mean"):
+        mean, std = list(cfg.mean), list(cfg.std)
+    else:
+        mean = list(cfg.get("mean", (0.485, 0.456, 0.406)))
+        std  = list(cfg.get("std",  (0.229, 0.224, 0.225)))
+    return A.Compose([
+        A.Resize(IMAGE_SIZE, IMAGE_SIZE),
+        A.Normalize(mean=mean, std=std),
+        ToTensorV2(),
+    ])
+
+
+def load_model(checkpoint_path: Path, device: torch.device) -> tuple[FaceDetectionModel, A.Compose]:
     model = FaceDetectionModel(pretrained=False)
     try:
         checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
@@ -61,7 +68,8 @@ def load_model(checkpoint_path: Path, device: torch.device) -> FaceDetectionMode
     model.load_state_dict(checkpoint["model_state_dict"])
     model.to(device)
     model.eval()
-    return model
+    transform = build_transform(model)
+    return model, transform
 
 # ── Grad-CAM ─────────────────────────────────────────────────────────────────
 
@@ -88,17 +96,16 @@ class GradCAM:
 
     def compute(
         self, tensor: torch.Tensor, device: torch.device, alpha: float = 0.45
-    ) -> tuple[np.ndarray, np.ndarray, float]:
+    ) -> tuple[np.ndarray, float]:
         """
         Args:
             tensor : (1, 3, 224, 224) preprocessed image tensor (CPU)
             device : inference device
-            alpha  : heatmap blend opacity
+            alpha  : unused — kept for API compatibility
 
         Returns:
-            overlay_np : (224, 224, 3) uint8 — blended heatmap image
-            cam_np     : (224, 224) float32 in [0,1] — raw CAM
-            prob       : float — sigmoid(logit), probability of Fake
+            cam_np : (224, 224) float32 in [0,1] — normalized CAM
+            prob   : float — sigmoid(logit), probability of Fake
         """
         tensor = tensor.to(device)
         self.model.zero_grad()
@@ -125,14 +132,14 @@ class GradCAM:
 
 # ── Image preprocessing ───────────────────────────────────────────────────────
 
-def preprocess(pil_image: Image.Image) -> tuple[torch.Tensor, np.ndarray]:
+def preprocess(pil_image: Image.Image, transform: A.Compose) -> tuple[torch.Tensor, np.ndarray]:
     """
     Returns:
         tensor   : (1, 3, 224, 224) — normalized, batch-dim added
         image_np : (224, 224, 3) uint8 — resized original for overlay
     """
     rgb = np.array(pil_image.convert("RGB"))
-    out = TRANSFORM(image=rgb)
+    out = transform(image=rgb)
     tensor = out["image"].unsqueeze(0)
     image_np = np.array(
         Image.fromarray(rgb).resize((IMAGE_SIZE, IMAGE_SIZE), Image.BILINEAR)
@@ -157,6 +164,7 @@ def predict_image(
     model: FaceDetectionModel,
     gradcam: GradCAM,
     device: torch.device,
+    transform: A.Compose,
     include_gradcam: bool = True,
 ) -> dict:
     """
@@ -164,7 +172,7 @@ def predict_image(
 
     Returns dict with fields matching the API response schema.
     """
-    tensor, image_np = preprocess(pil_image)
+    tensor, image_np = preprocess(pil_image, transform)
 
     t0 = time.perf_counter()
 

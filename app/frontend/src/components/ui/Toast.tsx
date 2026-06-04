@@ -11,11 +11,15 @@ export function Toast({ message, onDone }: ToastProps) {
   useEffect(() => {
     if (!message) return
     setVisible(true)
-    const t = setTimeout(() => {
+    let inner: ReturnType<typeof setTimeout>
+    const outer = setTimeout(() => {
       setVisible(false)
-      setTimeout(onDone, 300)
+      inner = setTimeout(onDone, 300)
     }, 3000)
-    return () => clearTimeout(t)
+    return () => {
+      clearTimeout(outer)
+      clearTimeout(inner)
+    }
   }, [message, onDone])
 
   return (

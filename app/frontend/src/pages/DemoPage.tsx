@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, type ChangeEvent } from 'react'
 import { HeroSection } from '../components/hero/HeroSection'
 import { UploadZone } from '../components/upload/UploadZone'
 import { ImagePreview } from '../components/analysis/ImagePreview'
@@ -86,13 +86,29 @@ const archSteps = [
 ]
 
 export function DemoPage() {
-  const { appState } = useAppStore()
+  const { appState, setFile, analyze } = useAppStore()
   const previewUrl = useAppStore((s) => s.previewUrl)
   const [toast, setToast] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleToast = useCallback((msg: string) => setToast(msg), [])
   const handleNewFile = useCallback(() => fileInputRef.current?.click(), [])
+
+  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setToast('Chỉ chấp nhận JPG, PNG, WEBP.')
+      return
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setToast('File vượt quá 10MB.')
+      return
+    }
+    setFile(file)
+    analyze()
+    e.target.value = ''
+  }, [setFile, analyze])
 
   const showAppGrid = appState !== 'idle' || previewUrl !== null
 
@@ -222,6 +238,13 @@ export function DemoPage() {
         </div>
       </section>
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handleFileChange}
+      />
       <Toast message={toast} onDone={() => setToast(null)} />
     </>
   )
