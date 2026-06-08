@@ -75,7 +75,7 @@ Labels are inferred from directory names:
 - Fake: `fake`, `Fake`, `training_fake`
 
 Split: **70% train / 15% val / 15% test**, stratified, `random_state=42`.  
-CSV schema: `image_path` (absolute str), `label` (int: 0=fake, 1=real).
+CSV schema: `image_path` (absolute str), `label` (str: "Real" or "Fake", converted to int by Dataset: 0=Real, 1=Fake).
 
 ---
 
